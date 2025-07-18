@@ -1,0 +1,8 @@
+{
+  "name": "kolaybi/mail-checker",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "require": {
+  }
+}
