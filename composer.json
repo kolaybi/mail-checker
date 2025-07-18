@@ -3,6 +3,7 @@
   "description": "description",
   "minimum-stability": "stable",
   "license": "proprietary",
-  "require": {
+  "require-dev": {
+    "laravel/pint": "^1.24"
   }
 }
