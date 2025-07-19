@@ -12,7 +12,7 @@ class LocalDomainService
 
     public function __construct()
     {
-        $this->config = Config::get('mail-checker.services.local');
+        $this->config = Config::get('mail-checker.local');
     }
 
     public function isWhitelisted(string $mail): bool

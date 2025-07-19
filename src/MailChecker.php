@@ -8,8 +8,12 @@ use KolayBi\Validation\Mail\Exceptions\AbstractMailException;
 use KolayBi\Validation\Mail\Exceptions\BlacklistedMailException;
 use KolayBi\Validation\Mail\Exceptions\DisposableMailException;
 use KolayBi\Validation\Mail\Exceptions\EmptyMailException;
+use KolayBi\Validation\Mail\Exceptions\ExternalMailProviderException;
 use KolayBi\Validation\Mail\Exceptions\InvalidMailException;
+use KolayBi\Validation\Mail\Services\ExternalMailProviderInterface;
+use KolayBi\Validation\Mail\Services\ExternalMailService;
 use KolayBi\Validation\Mail\Services\LocalDomainService;
+use Throwable;
 
 final class MailChecker
 {
@@ -18,7 +22,7 @@ final class MailChecker
      *
      * @throws AbstractMailException
      */
-    public static function check(string $mail, bool $skipExternalControl = false): bool
+    public static function check(string $mail, bool $skipExternalControl = false): void
     {
         if (empty($mail)) {
             throw new EmptyMailException();
@@ -27,7 +31,7 @@ final class MailChecker
         $localDomainService = new LocalDomainService();
 
         if ($localDomainService->isWhitelisted($mail)) {
-            return true;
+            return;
         }
 
         if (!self::isValidFormat($mail)) {
@@ -43,12 +47,10 @@ final class MailChecker
         }
 
         if ($skipExternalControl) {
-            return true;
+            return;
         }
 
         self::checkViaExternalServices($mail);
-
-        return true;
     }
 
     /**
@@ -57,18 +59,12 @@ final class MailChecker
     public static function isValid(string $mail): bool
     {
         try {
-            return self::check($mail);
+            self::check($mail);
+
+            return true;
         } catch (Exception) {
             return false;
         }
-    }
-
-    /**
-     * Check the mail's validity against external services
-     */
-    private static function checkViaExternalServices(string $mail): void
-    {
-        // TODO
     }
 
     private static function isValidFormat(string $mail): bool
@@ -78,5 +74,32 @@ final class MailChecker
         }
 
         return false !== filter_var($mail, FILTER_VALIDATE_EMAIL);
+    }
+
+    /**
+     * Check the mail's validity against external services
+     *
+     * @throws ExternalMailProviderException
+     */
+    private static function checkViaExternalServices(string $mail): void
+    {
+        $externalMailService = new ExternalMailService();
+
+        $providers = $externalMailService->getProviders();
+        foreach ($providers as $provider) {
+            try {
+                /** @var ExternalMailProviderInterface $provider */
+                $provider = new $provider();
+                if ($provider->isReal($mail)) {
+                    break;
+                }
+
+                throw new ExternalMailProviderException();
+            } catch (ExternalMailProviderException) {
+                throw new ExternalMailProviderException();
+            } catch (Throwable) {
+                continue;
+            }
+        }
     }
 }
