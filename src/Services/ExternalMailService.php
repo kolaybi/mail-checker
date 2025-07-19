@@ -19,14 +19,10 @@ class ExternalMailService
         $priorityOrder = Arr::get($this->config, 'priority', []);
         $allProviders = Arr::get($this->config, 'providers', []);
 
-        // Return resolver class names in priority order
-        $providers = [];
-        foreach ($priorityOrder as $providerName) {
-            if (isset($allProviders[$providerName]['resolver']) && !empty($allProviders[$providerName]['resolver'])) {
-                $providers[] = $allProviders[$providerName]['resolver'];
-            }
-        }
-
-        return $providers;
+        return collect($priorityOrder)
+            ->map(fn($name) => $allProviders[$name]['resolver'] ?? null)
+            ->filter()
+            ->values()
+            ->toArray();
     }
 }
