@@ -1,5 +1,9 @@
 <?php
 
+use KolayBi\Validation\Mail\Services\Providers\AbstractApi;
+use KolayBi\Validation\Mail\Services\Providers\MailboxLayer;
+use KolayBi\Validation\Mail\Services\Providers\Mailgun;
+
 return [
     'local'    => [
         'whitelist'  => [
@@ -22,24 +26,24 @@ return [
         ),
         'providers' => [
             'abstract_api' => [
-                'resolver' => '',
+                'resolver' => AbstractApi::class,
                 'config'   => [
                     'endpoint' => env('ABSTRACT_API_EMAIL_ENDPOINT'),
                     'api_key'  => env('ABSTRACT_API_EMAIL_API_KEY'),
                 ],
             ],
             'mailboxlayer' => [
-                'resolver' => '',
+                'resolver' => MailboxLayer::class,
                 'config'   => [
                     'endpoint'   => env('MAILBOX_LAYER_ENDPOINT'),
                     'access_key' => env('MAILBOX_LAYER_ACCESS_KEY'),
                 ],
             ],
             'mailgun'      => [
-                'resolver' => '',
+                'resolver' => Mailgun::class,
                 'config'   => [
                     'endpoint' => env('MAILGUN_VALIDATION_ENDPOINT'),
-                    'secret'   => env('MAILGUN_SECRET'),
+                    'api_key'  => env('MAILGUN_API_KEY'),
                 ],
             ],
         ],
