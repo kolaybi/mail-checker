@@ -3,6 +3,9 @@
   "description": "A Laravel package providing e-mail validation for better email delivery.",
   "minimum-stability": "stable",
   "license": "proprietary",
+  "require": {
+    "illuminate/support": "^12"
+  },
   "require-dev": {
     "laravel/pint": "^1.24"
   },
