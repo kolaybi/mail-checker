@@ -10,7 +10,6 @@ use KolayBi\Validation\Mail\Exceptions\DisposableMailException;
 use KolayBi\Validation\Mail\Exceptions\EmptyMailException;
 use KolayBi\Validation\Mail\Exceptions\ExternalMailProviderException;
 use KolayBi\Validation\Mail\Exceptions\InvalidMailException;
-use KolayBi\Validation\Mail\Services\ExternalMailProviderInterface;
 use KolayBi\Validation\Mail\Services\ExternalMailService;
 use KolayBi\Validation\Mail\Services\LocalDomainService;
 use Throwable;
@@ -69,6 +68,10 @@ final class MailChecker
 
     private static function isValidFormat(string $mail): bool
     {
+        if (Str::length($mail) > 320) {
+            return false;
+        }
+
         if (Str::contains($mail, '"')) {
             return false;
         }
@@ -86,10 +89,9 @@ final class MailChecker
         $externalMailService = new ExternalMailService();
 
         $providers = $externalMailService->getProviders();
-        foreach ($providers as $provider) {
+        foreach ($providers as $providerClass => $providerConfig) {
             try {
-                /** @var ExternalMailProviderInterface $provider */
-                $provider = new $provider();
+                $provider = $externalMailService->createProvider($providerClass, $providerConfig);
                 if ($provider->isReal($mail)) {
                     break;
                 }

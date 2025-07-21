@@ -19,10 +19,15 @@ class ExternalMailService
         $priorityOrder = Arr::get($this->config, 'priority', []);
         $allProviders = Arr::get($this->config, 'providers', []);
 
-        return collect($priorityOrder)
-            ->map(fn($name) => $allProviders[$name]['resolver'] ?? null)
-            ->filter()
-            ->values()
+        return collect(Arr::only($allProviders, $priorityOrder))
+            ->mapWithKeys(fn($provider) => [
+                Arr::get($provider, 'resolver') => Arr::get($provider, 'config', []),
+            ])
             ->toArray();
+    }
+
+    public function createProvider(string $providerClass, array $providerConfig): ExternalMailProviderInterface
+    {
+        return new $providerClass($providerConfig);
     }
 }
