@@ -77,7 +77,16 @@ class UpdateWhitelistDomains extends Command implements Isolatable
 
         $existingDomains = Storage::json($this->storagePath) ?? [];
 
-        $updatedDomains = array_unique(array_merge($existingDomains, $domains));
+        // Check for duplicates before adding
+        $newDomains = array_diff($domains, $existingDomains);
+
+        if (empty($newDomains)) {
+            $this->warn('All specified domains are already in the whitelist.');
+
+            return;
+        }
+
+        $updatedDomains = array_unique(array_merge($existingDomains, $newDomains));
 
         if (!$this->save($updatedDomains)) {
             $this->error('Could not save domains to storage.');
@@ -85,7 +94,14 @@ class UpdateWhitelistDomains extends Command implements Isolatable
             return;
         }
 
-        $this->info('Domains added successfully.');
+        $addedCount = count($newDomains);
+        $skippedCount = count($domains) - $addedCount;
+
+        $this->info("Successfully added {$addedCount} domain(s) to whitelist.");
+
+        if ($skippedCount > 0) {
+            $this->warn("Skipped {$skippedCount} domain(s) that were already whitelisted.");
+        }
     }
 
     private function removeDomains(array $domains): void
@@ -94,7 +110,22 @@ class UpdateWhitelistDomains extends Command implements Isolatable
 
         $existingDomains = Storage::json($this->storagePath) ?? [];
 
-        $updatedDomains = array_diff($existingDomains, $domains);
+        if (empty($existingDomains)) {
+            $this->warn('Whitelist is empty. No domains to remove.');
+
+            return;
+        }
+
+        // Check which domains actually exist in the list
+        $domainsToRemove = array_intersect($domains, $existingDomains);
+
+        if (empty($domainsToRemove)) {
+            $this->warn('None of the specified domains are currently whitelisted.');
+
+            return;
+        }
+
+        $updatedDomains = array_diff($existingDomains, $domainsToRemove);
 
         if (!$this->save($updatedDomains)) {
             $this->error('Could not save domains to storage.');
@@ -102,7 +133,14 @@ class UpdateWhitelistDomains extends Command implements Isolatable
             return;
         }
 
-        $this->info('Domains removed successfully.');
+        $removedCount = count($domainsToRemove);
+        $notFoundCount = count($domains) - $removedCount;
+
+        $this->info("Successfully removed {$removedCount} domain(s) from whitelist.");
+
+        if ($notFoundCount > 0) {
+            $this->warn("Skipped {$notFoundCount} domain(s) that were not in the whitelist.");
+        }
     }
 
     private function save(array $data): bool
