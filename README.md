@@ -1,0 +1,137 @@
+# KolayBi Mail Checker
+
+A Laravel package providing comprehensive e-mail validation for better email delivery.
+
+## Features
+
+- Validate email format and structure
+- Check against disposable email domains
+- Blacklist and whitelist domain support
+- Integration with external validation services
+    - AbstractAPI
+    - MailboxLayer
+    - Mailgun
+- Flexible configuration
+- Detailed exception handling
+
+## Installation
+
+You can install the package via composer:
+
+```bash
+composer require kolaybi/mail-checker
+```
+
+## Configuration
+
+Publish the configuration file:
+
+```bash
+php artisan vendor:publish --provider="KolayBi\Validation\Mail\ServiceProvider"
+```
+
+This will create a `mail-checker.php` configuration file in your application's config directory.
+
+### Environment Variables
+
+Configure the following environment variables in your `.env` file:
+
+```env
+# Local domain lists paths
+MAIL_CHECKER_WHITELIST_STORAGE_PATH=data/domains/whitelisted_domains.json
+MAIL_CHECKER_BLACKLIST_STORAGE_PATH=data/domains/blacklisted_domains.json
+MAIL_CHECKER_DISPOSABLE_STORAGE_PATH=data/domains/disposable_domains.json
+MAIL_CHECKER_DISPOSABLE_URL=https://rawgit.com/andreis/disposable-email-domains/master/domains.json
+
+# External provider priority
+MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY=abstract_api,mailboxlayer,mailgun
+
+# AbstractAPI configuration
+ABSTRACT_API_EMAIL_ENDPOINT=https://emailvalidation.abstractapi.com/v1/
+ABSTRACT_API_EMAIL_API_KEY=your_api_key
+
+# MailboxLayer configuration
+MAILBOX_LAYER_ENDPOINT=http://apilayer.net/api/check
+MAILBOX_LAYER_ACCESS_KEY=your_access_key
+
+# Mailgun configuration
+MAILGUN_VALIDATION_ENDPOINT=https://api.mailgun.net/v4/address/validate
+MAILGUN_API_KEY=your_api_key
+```
+
+## Usage
+
+### Basic Validation
+
+```php
+use KolayBi\Validation\Mail\MailChecker;
+use KolayBi\Validation\Mail\Exceptions\AbstractMailException;
+
+try {
+    MailChecker::check('user@example.com');
+    // Email is valid
+} catch (AbstractMailException $e) {
+    // Handle specific validation errors
+    echo $e->getMessage();
+}
+```
+
+### Simplified Boolean Check
+
+```php
+if (MailChecker::isValid('user@example.com')) {
+    // Email is valid
+} else {
+    // Email is invalid
+}
+```
+
+### Skip External Validation
+
+```php
+// Perform only local validation checks
+MailChecker::check('user@example.com', true);
+```
+
+## Exception Types
+
+The package throws specific exceptions for different validation scenarios:
+
+- `EmptyMailException` - Email address is empty
+- `InvalidMailException` - Email format is invalid
+- `BlacklistedMailException` - Domain is blacklisted
+- `DisposableMailException` - Domain is from a disposable email provider
+- `ExternalMailProviderException` - Failed external validation
+
+## Command Line Interface
+
+Manage domain lists using artisan commands:
+
+```bash
+# Update disposable domain list from configured URL
+php artisan mail:update-disposable-domains
+
+# Whitelist operations
+php artisan mail-checker:update-domains --type=whitelist --add=kolaybi.com --add=newdomain.com
+php artisan mail-checker:update-domains --type=whitelist --remove=oldomain.com
+php artisan mail-checker:update-domains --type=whitelist --list
+php artisan mail-checker:update-domains --type=whitelist --add=kolaybi.com --add=newdomain.com --remove=oldomain.com --list
+
+# Blacklist operations  
+php artisan mail-checker:update-domains --type=blacklist --add=spam.com
+php artisan mail-checker:update-domains --type=blacklist --remove=notspam.com
+php artisan mail-checker:update-domains --type=blacklist --list
+php artisan mail-checker:update-domains --type=blacklist --add=spam.com --add=fraud.com --remove=notspam.com --list
+```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## Contributing
+
+Please see [CONTRIBUTING](https://github.com/kolaybi/.github/blob/master/CONTRIBUTING.md) for details.
+
+## License
+
+Proprietary. Please see [License File](LICENSE.md) for more information.
