@@ -7,23 +7,43 @@ use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use InvalidArgumentException;
 
 class UpdateWhitelistDomains extends Command implements Isolatable
 {
     protected $signature = 'mail.whitelist:update 
-                            {domain*} 
+                            {domain* : Domain names to add or remove from whitelist} 
                             {--a|add : Add domain to whitelist} 
                             {--r|remove : Remove domain from whitelist}';
 
     protected $description = 'Update the whitelist mail domains list';
 
     private array $config;
+    private string $storagePath;
 
+    /**
+     * @throws InvalidArgumentException When required configuration is missing
+     */
     public function __construct()
     {
         parent::__construct();
 
-        $this->config = Config::get('mail-checker.local.whitelist');
+        $this->config = Config::get('mail-checker.local.whitelist') ?? [];
+
+        if (empty($this->config)) {
+            throw new InvalidArgumentException('Mail checker whitelist configuration is missing');
+        }
+
+        $this->storagePath = Arr::get($this->config, 'storage_path');
+
+        if (empty($this->storagePath)) {
+            throw new InvalidArgumentException('Whitelist storage path configuration is missing');
+        }
+
+        // Validate storage path (prevent path traversal)
+        if (preg_match('#(\.\./)#', $this->storagePath)) {
+            throw new InvalidArgumentException('Invalid storage path detected - possible path traversal attempt');
+        }
     }
 
     public function handle(): void
@@ -55,8 +75,7 @@ class UpdateWhitelistDomains extends Command implements Isolatable
     {
         $this->info('Adding domains: ' . implode(', ', $domains));
 
-        $storagePath = Arr::get($this->config, 'storage_path');
-        $existingDomains = Storage::json($storagePath) ?? [];
+        $existingDomains = Storage::json($this->storagePath) ?? [];
 
         $updatedDomains = array_unique(array_merge($existingDomains, $domains));
 
@@ -73,8 +92,7 @@ class UpdateWhitelistDomains extends Command implements Isolatable
     {
         $this->info('Removing domains: ' . implode(', ', $domains));
 
-        $storagePath = Arr::get($this->config, 'storage_path');
-        $existingDomains = Storage::json($storagePath) ?? [];
+        $existingDomains = Storage::json($this->storagePath) ?? [];
 
         $updatedDomains = array_diff($existingDomains, $domains);
 
@@ -89,10 +107,8 @@ class UpdateWhitelistDomains extends Command implements Isolatable
 
     private function save(array $data): bool
     {
-        $storagePath = Arr::get($this->config, 'storage_path');
+        $this->info("Updating whitelist at {$this->storagePath}");
 
-        $this->info("Updating whitelist at {$storagePath}");
-
-        return Storage::put($storagePath, json_encode($data));
+        return Storage::put($this->storagePath, json_encode($data));
     }
 }
