@@ -6,17 +6,17 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Uri;
 use KolayBi\Validation\Mail\Exceptions\AbstractApiExternalMailProviderException;
-use KolayBi\Validation\Mail\Services\ExternalMailProviderInterface;
 
 readonly class AbstractApi implements ExternalMailProviderInterface
 {
+    use ProviderTrait;
+
     private const string UNDELIVERABLE = 'UNDELIVERABLE';
 
-    public function __construct(
-        private array $config,
-    ) {}
-
-    public function isReal(string $mail): bool
+    /**
+     * @throws AbstractApiExternalMailProviderException
+     */
+    private function performValidation(string $mail): bool
     {
         $url = Uri::of(Arr::get($this->config, 'endpoint'))
             ->withQuery([

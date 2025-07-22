@@ -1,6 +1,6 @@
 <?php
 
-namespace KolayBi\Validation\Mail\Services;
+namespace KolayBi\Validation\Mail\Services\Providers;
 
 use KolayBi\Validation\Mail\Exceptions\ExternalMailProviderException;
 

@@ -5,40 +5,85 @@ namespace KolayBi\Validation\Mail\Services;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use KolayBi\Validation\Mail\Enums\ListType;
+use KolayBi\Validation\Mail\Enums\ServiceType;
 
 class LocalDomainService
 {
     private array $config;
 
+    private CacheService $cacheService;
+
     public function __construct()
     {
         $this->config = Config::get('mail-checker.local');
+        $this->cacheService = new CacheService(
+            Arr::get($this->config, 'cache.ttl'),
+            Arr::get($this->config, 'cache.enabled'),
+            Arr::get($this->config, 'cache.store'),
+        );
     }
 
     public function isWhitelisted(string $mail): bool
     {
-        $domains = $this->getDomains(Arr::get($this->config, 'whitelist.storage_path'));
-
-        return $this->contains($mail, $domains);
+        return $this->is($mail, ListType::WHITELIST);
     }
 
     public function isBlacklisted(string $mail): bool
     {
-        $domains = $this->getDomains(Arr::get($this->config, 'blacklist.storage_path'));
-
-        return $this->contains($mail, $domains);
+        return $this->is($mail, ListType::BLACKLIST);
     }
 
     public function isDisposable(string $mail): bool
     {
-        $domains = $this->getDomains(Arr::get($this->config, 'disposable.storage_path'));
+        return $this->is($mail, ListType::DISPOSABLE);
+    }
+
+    /**
+     * Clear domain cache for a specific list type or all lists
+     */
+    public function clearCache(?ListType $listType = null): bool
+    {
+        if ($listType) {
+            $path = Arr::get($this->config, "{$listType->value}.storage_path");
+
+            return $this->cacheService->forget("domains:{$path}");
+        }
+
+        // Clear all domain caches
+        $result = true;
+        foreach (ListType::cases() as $type) {
+            $path = Arr::get($this->config, "{$type->value}.storage_path");
+            $result = $result && $this->cacheService->forget("domains:{$path}");
+        }
+
+        return $result;
+    }
+
+    private function is(string $mail, ListType $listType): bool
+    {
+        $serviceType = ServiceType::LOCAL->value;
+
+        return $this->cacheService->remember(
+            "{$serviceType}:{$listType->value}:{$mail}",
+            fn() => $this->checkDomainList($mail, $listType),
+        );
+    }
+
+    private function checkDomainList(string $mail, ListType $listType): bool
+    {
+        $domains = $this->getDomains(Arr::get($this->config, "{$listType->value}.storage_path"));
 
         return $this->contains($mail, $domains);
     }
 
     private function getDomains(string $filePath): array
     {
-        return Storage::json($filePath) ?? [];
+        // Cache the domain lists as they don't change frequently
+        return $this->cacheService->remember(
+            "domains:{$filePath}",
+            fn() => Storage::json($filePath) ?? [],
+        );
     }
 
     /**

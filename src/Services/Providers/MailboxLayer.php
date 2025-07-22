@@ -6,15 +6,15 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Uri;
 use KolayBi\Validation\Mail\Exceptions\MailboxLayerExternalMailProviderException;
-use KolayBi\Validation\Mail\Services\ExternalMailProviderInterface;
 
 readonly class MailboxLayer implements ExternalMailProviderInterface
 {
-    public function __construct(
-        private array $config,
-    ) {}
+    use ProviderTrait;
 
-    public function isReal(string $mail): bool
+    /**
+     * @throws MailboxLayerExternalMailProviderException
+     */
+    private function performValidation(string $mail): bool
     {
         $url = Uri::of(Arr::get($this->config, 'endpoint'))
             ->withQuery([

@@ -5,8 +5,12 @@ use KolayBi\Validation\Mail\Services\Providers\MailboxLayer;
 use KolayBi\Validation\Mail\Services\Providers\Mailgun;
 
 return [
-    'log_channel' => env('MAIL_CHECKER_LOG_CHANNEL'),
-    'local'       => [
+    'local'    => [
+        'cache'      => [
+            'enabled' => (bool) env('MAIL_CHECKER_LOCAL_CACHE_ENABLED', true),
+            'ttl'     => (int) env('MAIL_CHECKER_LOCAL_CACHE_TTL', 60 * 60 * 24 * 7), // 1 week
+            'store'   => env('MAIL_CHECKER_LOCAL_CACHE_STORE'),
+        ],
         'whitelist'  => [
             'storage_path' => env('MAIL_CHECKER_WHITELIST_STORAGE_PATH', 'data/domains/whitelisted_domains.json'),
         ],
@@ -18,7 +22,12 @@ return [
             'url'          => env('MAIL_CHECKER_DISPOSABLE_URL', 'https://rawgit.com/andreis/disposable-email-domains/master/domains.json'),
         ],
     ],
-    'external'    => [
+    'external' => [
+        'cache'     => [
+            'enabled' => (bool) env('MAIL_CHECKER_EXTERNAL_CACHE_ENABLED', true),
+            'ttl'     => (int) env('MAIL_CHECKER_EXTERNAL_CACHE_TTL', 60 * 60 * 24), // 1 day
+            'store'   => env('MAIL_CHECKER_EXTERNAL_CACHE_STORE'),
+        ],
         'priority'  => explode(
             ',',
             env(

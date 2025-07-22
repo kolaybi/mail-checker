@@ -8,11 +8,9 @@ use KolayBi\Validation\Mail\Exceptions\AbstractMailException;
 use KolayBi\Validation\Mail\Exceptions\BlacklistedMailException;
 use KolayBi\Validation\Mail\Exceptions\DisposableMailException;
 use KolayBi\Validation\Mail\Exceptions\EmptyMailException;
-use KolayBi\Validation\Mail\Exceptions\ExternalMailProviderException;
 use KolayBi\Validation\Mail\Exceptions\InvalidMailException;
 use KolayBi\Validation\Mail\Services\ExternalMailService;
 use KolayBi\Validation\Mail\Services\LocalDomainService;
-use Throwable;
 
 final class MailChecker
 {
@@ -49,7 +47,7 @@ final class MailChecker
             return;
         }
 
-        self::checkViaExternalServices($mail);
+        new ExternalMailService()->checkDeliverability($mail);
     }
 
     /**
@@ -77,31 +75,5 @@ final class MailChecker
         }
 
         return false !== filter_var($mail, FILTER_VALIDATE_EMAIL);
-    }
-
-    /**
-     * Check the mail's validity against external services
-     *
-     * @throws ExternalMailProviderException
-     */
-    private static function checkViaExternalServices(string $mail): void
-    {
-        $externalMailService = new ExternalMailService();
-
-        $providers = $externalMailService->getProviders();
-        foreach ($providers as $providerClass => $providerConfig) {
-            try {
-                $provider = $externalMailService->createProvider($providerClass, $providerConfig);
-                if ($provider->isReal($mail)) {
-                    break;
-                }
-
-                throw new ExternalMailProviderException();
-            } catch (ExternalMailProviderException) {
-                throw new ExternalMailProviderException();
-            } catch (Throwable) {
-                continue;
-            }
-        }
     }
 }

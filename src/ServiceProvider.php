@@ -4,6 +4,7 @@ namespace KolayBi\Validation\Mail;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
+use KolayBi\Validation\Mail\Console\ClearMailCache;
 use KolayBi\Validation\Mail\Console\UpdateDisposableDomains;
 use KolayBi\Validation\Mail\Console\UpdateDomains;
 
@@ -43,9 +44,14 @@ class ServiceProvider extends IlluminateServiceProvider implements DeferrablePro
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
+                ClearMailCache::class,
                 UpdateDisposableDomains::class,
                 UpdateDomains::class,
             ]);
+
+            $this->optimizes(
+                clear: 'mail-checker:cache-clear',
+            );
         }
     }
 }
