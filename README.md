@@ -43,6 +43,14 @@ MAIL_CHECKER_BLACKLIST_STORAGE_PATH=data/domains/blacklisted_domains.json
 MAIL_CHECKER_DISPOSABLE_STORAGE_PATH=data/domains/disposable_domains.json
 MAIL_CHECKER_DISPOSABLE_URL=https://rawgit.com/andreis/disposable-email-domains/master/domains.json
 
+# Cache configuration
+MAIL_CHECKER_LOCAL_CACHE_ENABLED=true
+MAIL_CHECKER_LOCAL_CACHE_TTL=604800
+MAIL_CHECKER_LOCAL_CACHE_STORE=file
+MAIL_CHECKER_EXTERNAL_CACHE_ENABLED=true
+MAIL_CHECKER_EXTERNAL_CACHE_TTL=86400
+MAIL_CHECKER_EXTERNAL_CACHE_STORE=file
+
 # External provider priority
 MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY=abstract_api,mailboxlayer,mailgun
 
@@ -109,7 +117,7 @@ Manage domain lists using artisan commands:
 
 ```bash
 # Update disposable domain list from configured URL
-php artisan mail:update-disposable-domains
+php artisan mail-checker:update-disposable-domains
 
 # Whitelist operations
 php artisan mail-checker:update-domains --type=whitelist --add=kolaybi.com --add=newdomain.com
@@ -122,6 +130,12 @@ php artisan mail-checker:update-domains --type=blacklist --add=spam.com
 php artisan mail-checker:update-domains --type=blacklist --remove=notspam.com
 php artisan mail-checker:update-domains --type=blacklist --list
 php artisan mail-checker:update-domains --type=blacklist --add=spam.com --add=fraud.com --remove=notspam.com --list
+
+# Cache management
+php artisan mail-checker:cache-clear                            # Clear all caches
+php artisan mail-checker:cache-clear --type=local               # Clear only local validation cache
+php artisan mail-checker:cache-clear --type=external            # Clear only external validation cache
+php artisan mail-checker:cache-clear --type=local --domain-type=whitelist  # Clear only whitelist domain cache
 ```
 
 ## Changelog
