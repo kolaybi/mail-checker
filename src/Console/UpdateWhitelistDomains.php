@@ -2,15 +2,13 @@
 
 namespace KolayBi\Validation\Mail\Console;
 
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
-
-use function strtolower;
-use function trim;
 
 class UpdateWhitelistDomains extends Command implements Isolatable
 {
@@ -22,6 +20,7 @@ class UpdateWhitelistDomains extends Command implements Isolatable
     protected $description = 'Update the whitelist mail domains list';
 
     private array $config;
+
     private string $storagePath;
 
     /**
@@ -162,11 +161,57 @@ class UpdateWhitelistDomains extends Command implements Isolatable
         }
     }
 
-    private function save(array $data): bool
+    private function save(array $domains): bool
     {
-        $this->info("Updating whitelist at {$this->storagePath}");
+        try {
+            // Sort domains alphabetically for consistent ordering
+            sort($domains);
 
-        return Storage::put($this->storagePath, json_encode($data));
+            // Ensure storage directory exists
+            $this->ensureStorageDirectoryExists();
+
+            // Convert to JSON with pretty formatting
+            $jsonData = json_encode(array_values($domains), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+            if (false === $jsonData) {
+                $this->error('Failed to encode domains to JSON.');
+
+                return false;
+            }
+
+            // Use Storage facade to save the file
+            $saved = Storage::put($this->storagePath, $jsonData);
+
+            if (!$saved) {
+                $this->error('Failed to write domains to storage file.');
+
+                return false;
+            }
+
+            // Verify the file was saved correctly
+            if (!Storage::exists($this->storagePath)) {
+                $this->error('Storage file was not created successfully.');
+
+                return false;
+            }
+
+            $this->line("Domains saved to: {$this->storagePath}");
+
+            return true;
+        } catch (Exception $e) {
+            $this->error('Storage error: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    private function ensureStorageDirectoryExists(): void
+    {
+        $directory = dirname($this->storagePath);
+
+        if ($directory && '.' !== $directory && !Storage::exists($directory)) {
+            Storage::makeDirectory($directory);
+        }
     }
 
     private function validateDomains(array $domains): array
