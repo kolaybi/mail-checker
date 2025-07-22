@@ -17,5 +17,12 @@
   },
   "scripts": {
     "pint": "./vendor/bin/pint --dirty --parallel"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "KolayBi\\Validation\\Mail\\ServiceProvider"
+      ]
+    }
   }
 }
