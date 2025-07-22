@@ -5,7 +5,8 @@ use KolayBi\Validation\Mail\Services\Providers\MailboxLayer;
 use KolayBi\Validation\Mail\Services\Providers\Mailgun;
 
 return [
-    'local'    => [
+    'log_channel' => env('MAIL_CHECKER_LOG_CHANNEL'),
+    'local'       => [
         'whitelist'  => [
             'storage_path' => env('MAIL_CHECKER_WHITELIST_STORAGE_PATH', 'data/domains/whitelisted_domains.json'),
         ],
@@ -14,9 +15,10 @@ return [
         ],
         'disposable' => [
             'storage_path' => env('MAIL_CHECKER_DISPOSABLE_STORAGE_PATH', 'data/domains/disposable_domains.json'),
+            'url'          => env('MAIL_CHECKER_DISPOSABLE_URL', 'https://rawgit.com/andreis/disposable-email-domains/master/domains.json'),
         ],
     ],
-    'external' => [
+    'external'    => [
         'priority'  => explode(
             ',',
             env(
