@@ -12,7 +12,7 @@ use Throwable;
 
 class UpdateDisposableDomains extends Command implements Isolatable
 {
-    protected $signature = 'mail.disposable:update';
+    protected $signature = 'mail-checker:update-disposable-domains';
 
     protected $description = 'Update the disposable mail domains list';
 

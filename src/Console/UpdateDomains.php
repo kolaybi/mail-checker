@@ -251,11 +251,7 @@ class UpdateDomains extends Command
         }
 
         // Check for minimum domain structure (at least one dot for TLD)
-        if (substr_count($domain, '.') < 1) {
-            return false;
-        }
-
-        return true;
+        return !(substr_count($domain, '.') < 1);
     }
 
     private function save(array $domains): bool
