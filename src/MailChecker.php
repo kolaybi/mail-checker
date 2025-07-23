@@ -14,6 +14,9 @@ use KolayBi\Validation\Mail\Services\LocalDomainService;
 
 final class MailChecker
 {
+    private static ?LocalDomainService $localDomainService = null;
+    private static ?ExternalMailService $externalMailService = null;
+
     /**
      * Perform the required checks for the mail address
      *
@@ -21,13 +24,16 @@ final class MailChecker
      */
     public static function check(string $mail, bool $skipExternalControl = false): void
     {
+        $mail = trim(strtolower($mail));
+
         if (empty($mail)) {
             throw new EmptyMailException();
         }
 
-        $localDomainService = new LocalDomainService();
+        // Use singleton pattern to avoid creating new instances on each call
+        self::$localDomainService ??= new LocalDomainService();
 
-        if ($localDomainService->isWhitelisted($mail)) {
+        if (self::$localDomainService->isWhitelisted($mail)) {
             return;
         }
 
@@ -35,11 +41,11 @@ final class MailChecker
             throw new InvalidMailException();
         }
 
-        if ($localDomainService->isBlacklisted($mail)) {
+        if (self::$localDomainService->isBlacklisted($mail)) {
             throw new BlacklistedMailException();
         }
 
-        if ($localDomainService->isDisposable($mail)) {
+        if (self::$localDomainService->isDisposable($mail)) {
             throw new DisposableMailException();
         }
 
@@ -47,7 +53,9 @@ final class MailChecker
             return;
         }
 
-        new ExternalMailService()->checkDeliverability($mail);
+        // Only initialize external service when actually needed
+        self::$externalMailService ??= new ExternalMailService();
+        self::$externalMailService->checkDeliverability($mail);
     }
 
     /**
@@ -66,11 +74,7 @@ final class MailChecker
 
     private static function isValidFormat(string $mail): bool
     {
-        if (Str::length($mail) > 320) {
-            return false;
-        }
-
-        if (Str::contains($mail, '"')) {
+        if (Str::length($mail) > 320 || Str::contains($mail, '"')) {
             return false;
         }
 

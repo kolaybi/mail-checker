@@ -28,6 +28,7 @@ class ServiceProvider extends IlluminateServiceProvider implements DeferrablePro
     {
         return [
             MailChecker::class,
+            ClearMailCache::class,
             UpdateDisposableDomains::class,
             UpdateDomains::class,
         ];

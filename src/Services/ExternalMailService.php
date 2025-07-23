@@ -15,8 +15,8 @@ use Throwable;
 class ExternalMailService
 {
     private array $config;
-
     private CacheService $cacheService;
+    private array $providers;
 
     public function __construct()
     {
@@ -26,6 +26,7 @@ class ExternalMailService
             Arr::get($this->config, 'cache.enabled'),
             Arr::get($this->config, 'cache.store'),
         );
+        $this->providers = $this->getProviders();
     }
 
     /**
@@ -35,9 +36,7 @@ class ExternalMailService
      */
     public function checkDeliverability(string $mail): void
     {
-        $providers = $this->getProviders();
-
-        foreach ($providers as $providerClass => $providerConfig) {
+        foreach ($this->providers as $providerClass => $providerConfig) {
             try {
                 $provider = $this->createProvider($providerClass, $providerConfig);
                 if ($provider->isReal($mail)) {
