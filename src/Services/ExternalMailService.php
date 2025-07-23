@@ -5,7 +5,9 @@ namespace KolayBi\Validation\Mail\Services;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use KolayBi\Validation\Mail\Enums\ServiceType;
+use KolayBi\Validation\Mail\Exceptions\AbstractMailException;
 use KolayBi\Validation\Mail\Exceptions\ExternalMailProviderException;
+use KolayBi\Validation\Mail\Exceptions\InaccessibleMailException;
 use KolayBi\Validation\Mail\Services\Providers\ExternalMailProviderInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use Throwable;
@@ -29,25 +31,35 @@ class ExternalMailService
     /**
      * Check the mail's deliverability against external services
      *
-     * @throws ExternalMailProviderException
+     * @throws AbstractMailException
      */
     public function checkDeliverability(string $mail): void
     {
         $providers = $this->getProviders();
+
         foreach ($providers as $providerClass => $providerConfig) {
             try {
                 $provider = $this->createProvider($providerClass, $providerConfig);
                 if ($provider->isReal($mail)) {
-                    break;
+                    return; // Mail is valid, exit successfully
                 }
 
-                throw new ExternalMailProviderException();
+                // Mail is not real according to this provider
+                throw new InaccessibleMailException();
             } catch (ExternalMailProviderException) {
-                throw new ExternalMailProviderException();
+                // Provider-specific exceptions (like API key errors) should skip to next provider
+                continue;
+            } catch (InaccessibleMailException) {
+                // Stop the chain
+                throw new InaccessibleMailException();
             } catch (Throwable) {
+                // Other unexpected errors should also skip to next provider
                 continue;
             }
         }
+
+        // If we've exhausted all providers without getting a result, throw exception
+        throw new ExternalMailProviderException();
     }
 
     /**
