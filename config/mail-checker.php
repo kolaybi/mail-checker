@@ -1,6 +1,7 @@
 <?php
 
 use KolayBi\Validation\Mail\Services\Providers\AbstractApi;
+use KolayBi\Validation\Mail\Services\Providers\Emailable;
 use KolayBi\Validation\Mail\Services\Providers\MailboxLayer;
 use KolayBi\Validation\Mail\Services\Providers\Mailgun;
 use KolayBi\Validation\Mail\Services\Providers\NeverBounce;
@@ -33,7 +34,7 @@ return [
             ',',
             env(
                 'MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY',
-                'abstract_api,mailboxlayer,mailgun,neverbounce',
+                'abstract_api,mailboxlayer,mailgun,neverbounce,emailable',
             ),
         ),
         'providers' => [
@@ -43,6 +44,14 @@ return [
                     'endpoint' => env('ABSTRACT_API_EMAIL_ENDPOINT', 'https://emailvalidation.abstractapi.com/v1/'),
                     'api_key'  => env('ABSTRACT_API_EMAIL_API_KEY'),
                     'timeout'  => (int) env('ABSTRACT_API_EMAIL_TIMEOUT', 10),
+                ],
+            ],
+            'emailable'    => [
+                'resolver' => Emailable::class,
+                'config'   => [
+                    'endpoint' => env('EMAILABLE_ENDPOINT', 'https://api.emailable.com/v1/verify'),
+                    'api_key'  => env('EMAILABLE_API_KEY'),
+                    'timeout'  => (int) env('EMAILABLE_TIMEOUT', 10),
                 ],
             ],
             'mailboxlayer' => [

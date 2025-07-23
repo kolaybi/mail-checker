@@ -8,10 +8,11 @@ A Laravel package providing comprehensive e-mail validation for better email del
 - Check against disposable email domains
 - Blacklist and whitelist domain support
 - Integration with external validation services
-    - AbstractAPI
-    - MailboxLayer
-    - Mailgun
-    - NeverBounce
+    - [AbstractAPI](https://abstractapi.com/)
+    - [Emailable](https://emailable.com/)
+    - [MailboxLayer](https://mailboxlayer.com/)
+    - [Mailgun](https://mailgun.com/)
+    - [NeverBounce](https://neverbounce.com/)
 - Flexible configuration
 - Detailed exception handling
 
@@ -59,6 +60,11 @@ MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY=abstract_api,mailboxlayer,mailgun
 ABSTRACT_API_EMAIL_ENDPOINT=https://emailvalidation.abstractapi.com/v1/
 ABSTRACT_API_EMAIL_API_KEY=your_api_key
 ABSTRACT_API_EMAIL_TIMEOUT=10
+
+# Emailable configuration
+EMAILABLE_ENDPOINT=https://api.emailable.com/v1/verify
+EMAILABLE_API_KEY=your_api_key
+EMAILABLE_TIMEOUT=10
 
 # MailboxLayer configuration
 MAILBOX_LAYER_ENDPOINT=https://apilayer.net/api/check
