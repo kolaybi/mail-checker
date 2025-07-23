@@ -24,7 +24,13 @@ readonly class Mailgun implements ExternalMailProviderInterface
             ])
             ->value();
 
-        $result = Http::get($url)->json();
+        $response = Http::timeout(Arr::get($this->config, 'timeout'))->get($url);
+
+        if (!$response->successful()) {
+            throw new MailgunExternalMailProviderException('HTTP request failed', $response->status());
+        }
+
+        $result = $response->json();
 
         if (!array_key_exists('message', $result)) {
             return Arr::get($result, 'is_valid')
@@ -32,6 +38,6 @@ readonly class Mailgun implements ExternalMailProviderInterface
                 && 'false' !== Arr::get($result, 'mailbox_verification');
         }
 
-        throw new MailgunExternalMailProviderException(Arr::get($result, 'message', ''));
+        throw new MailgunExternalMailProviderException(Arr::get($result, 'message', 'Unknown error'));
     }
 }

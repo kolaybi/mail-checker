@@ -41,6 +41,7 @@ return [
                 'config'   => [
                     'endpoint' => env('ABSTRACT_API_EMAIL_ENDPOINT'),
                     'api_key'  => env('ABSTRACT_API_EMAIL_API_KEY'),
+                    'timeout'  => (int) env('ABSTRACT_API_EMAIL_TIMEOUT', 10),
                 ],
             ],
             'mailboxlayer' => [
@@ -48,6 +49,7 @@ return [
                 'config'   => [
                     'endpoint'   => env('MAILBOX_LAYER_ENDPOINT'),
                     'access_key' => env('MAILBOX_LAYER_ACCESS_KEY'),
+                    'timeout'    => (int) env('MAILBOX_LAYER_TIMEOUT', 10),
                 ],
             ],
             'mailgun'      => [
@@ -55,6 +57,7 @@ return [
                 'config'   => [
                     'endpoint' => env('MAILGUN_VALIDATION_ENDPOINT'),
                     'api_key'  => env('MAILGUN_API_KEY'),
+                    'timeout'  => (int) env('MAILGUN_TIMEOUT', 10),
                 ],
             ],
         ],

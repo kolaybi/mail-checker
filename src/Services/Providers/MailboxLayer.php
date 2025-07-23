@@ -23,7 +23,13 @@ readonly class MailboxLayer implements ExternalMailProviderInterface
             ])
             ->value();
 
-        $result = Http::get($url)->json();
+        $response = Http::timeout(Arr::get($this->config, 'timeout'))->get($url);
+
+        if (!$response->successful()) {
+            throw new MailboxLayerExternalMailProviderException('HTTP request failed', $response->status());
+        }
+
+        $result = $response->json();
 
         if (array_key_exists('format_valid', $result)) {
             return Arr::get($result, 'format_valid')
@@ -31,6 +37,6 @@ readonly class MailboxLayer implements ExternalMailProviderInterface
                 && Arr::get($result, 'mx_found');
         }
 
-        throw new MailboxLayerExternalMailProviderException(Arr::get($result, 'error.type', ''));
+        throw new MailboxLayerExternalMailProviderException(Arr::get($result, 'error.type', 'Unknown error'));
     }
 }

@@ -26,12 +26,18 @@ readonly class AbstractApi implements ExternalMailProviderInterface
             ])
             ->value();
 
-        $result = Http::get($url)->json();
+        $response = Http::timeout(Arr::get($this->config, 'timeout'))->get($url);
+
+        if (!$response->successful()) {
+            throw new AbstractApiExternalMailProviderException('HTTP request failed', $response->status());
+        }
+
+        $result = $response->json();
 
         if (array_key_exists('deliverability', $result)) {
             return self::UNDELIVERABLE !== Arr::get($result, 'deliverability');
         }
 
-        throw new AbstractApiExternalMailProviderException(Arr::get($result, 'error.message', ''));
+        throw new AbstractApiExternalMailProviderException(Arr::get($result, 'error.message', 'Unknown error'));
     }
 }
