@@ -11,6 +11,7 @@ A Laravel package providing comprehensive e-mail validation for better email del
     - AbstractAPI
     - MailboxLayer
     - Mailgun
+    - NeverBounce
 - Flexible configuration
 - Detailed exception handling
 
@@ -60,7 +61,7 @@ ABSTRACT_API_EMAIL_API_KEY=your_api_key
 ABSTRACT_API_EMAIL_TIMEOUT=10
 
 # MailboxLayer configuration
-MAILBOX_LAYER_ENDPOINT=http://apilayer.net/api/check
+MAILBOX_LAYER_ENDPOINT=https://apilayer.net/api/check
 MAILBOX_LAYER_ACCESS_KEY=your_access_key
 MAILBOX_LAYER_TIMEOUT=10
 
@@ -68,6 +69,11 @@ MAILBOX_LAYER_TIMEOUT=10
 MAILGUN_VALIDATION_ENDPOINT=https://api.mailgun.net/v4/address/validate
 MAILGUN_API_KEY=your_api_key
 MAILGUN_TIMEOUT=10
+
+# NeverBounce configuration
+NEVER_BOUNCE_VALIDATION_ENDPOINT=https://api.neverbounce.com/v4/single/check
+NEVER_BOUNCE_API_KEY=your_api_key
+NEVER_BOUNCE_TIMEOUT=10
 ```
 
 ## Usage

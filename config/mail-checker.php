@@ -3,6 +3,7 @@
 use KolayBi\Validation\Mail\Services\Providers\AbstractApi;
 use KolayBi\Validation\Mail\Services\Providers\MailboxLayer;
 use KolayBi\Validation\Mail\Services\Providers\Mailgun;
+use KolayBi\Validation\Mail\Services\Providers\NeverBounce;
 
 return [
     'local'    => [
@@ -32,14 +33,14 @@ return [
             ',',
             env(
                 'MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY',
-                'abstract_api,mailboxlayer,mailgun',
+                'abstract_api,mailboxlayer,mailgun,neverbounce',
             ),
         ),
         'providers' => [
             'abstract_api' => [
                 'resolver' => AbstractApi::class,
                 'config'   => [
-                    'endpoint' => env('ABSTRACT_API_EMAIL_ENDPOINT'),
+                    'endpoint' => env('ABSTRACT_API_EMAIL_ENDPOINT', 'https://emailvalidation.abstractapi.com/v1/'),
                     'api_key'  => env('ABSTRACT_API_EMAIL_API_KEY'),
                     'timeout'  => (int) env('ABSTRACT_API_EMAIL_TIMEOUT', 10),
                 ],
@@ -47,7 +48,7 @@ return [
             'mailboxlayer' => [
                 'resolver' => MailboxLayer::class,
                 'config'   => [
-                    'endpoint'   => env('MAILBOX_LAYER_ENDPOINT'),
+                    'endpoint'   => env('MAILBOX_LAYER_ENDPOINT', 'https://apilayer.net/api/check'),
                     'access_key' => env('MAILBOX_LAYER_ACCESS_KEY'),
                     'timeout'    => (int) env('MAILBOX_LAYER_TIMEOUT', 10),
                 ],
@@ -55,9 +56,17 @@ return [
             'mailgun'      => [
                 'resolver' => Mailgun::class,
                 'config'   => [
-                    'endpoint' => env('MAILGUN_VALIDATION_ENDPOINT'),
+                    'endpoint' => env('MAILGUN_VALIDATION_ENDPOINT', 'https://api.mailgun.net/v4/address/validate'),
                     'api_key'  => env('MAILGUN_API_KEY'),
                     'timeout'  => (int) env('MAILGUN_TIMEOUT', 10),
+                ],
+            ],
+            'neverbounce'  => [
+                'resolver' => NeverBounce::class,
+                'config'   => [
+                    'endpoint' => env('NEVER_BOUNCE_VALIDATION_ENDPOINT', 'https://api.neverbounce.com/v4/single/check'),
+                    'api_key'  => env('NEVER_BOUNCE_API_KEY'),
+                    'timeout'  => (int) env('NEVER_BOUNCE_TIMEOUT', 10),
                 ],
             ],
         ],
