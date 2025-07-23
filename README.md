@@ -57,14 +57,17 @@ MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY=abstract_api,mailboxlayer,mailgun
 # AbstractAPI configuration
 ABSTRACT_API_EMAIL_ENDPOINT=https://emailvalidation.abstractapi.com/v1/
 ABSTRACT_API_EMAIL_API_KEY=your_api_key
+ABSTRACT_API_EMAIL_TIMEOUT=10
 
 # MailboxLayer configuration
 MAILBOX_LAYER_ENDPOINT=http://apilayer.net/api/check
 MAILBOX_LAYER_ACCESS_KEY=your_access_key
+MAILBOX_LAYER_TIMEOUT=10
 
 # Mailgun configuration
 MAILGUN_VALIDATION_ENDPOINT=https://api.mailgun.net/v4/address/validate
 MAILGUN_API_KEY=your_api_key
+MAILGUN_TIMEOUT=10
 ```
 
 ## Usage
@@ -98,7 +101,15 @@ if (MailChecker::isValid('user@example.com')) {
 
 ```php
 // Perform only local validation checks
-MailChecker::check('user@example.com', true);
+MailChecker::check('user@example.com', skipExternalControl: true);
+```
+```php
+// Perform only local validation checks
+if (MailChecker::isValid('user@example.com', skipExternalControl: true)) {
+    // Email is valid
+} else {
+    // Email is invalid
+}
 ```
 
 ## Exception Types
@@ -109,7 +120,8 @@ The package throws specific exceptions for different validation scenarios:
 - `InvalidMailException` - Email format is invalid
 - `BlacklistedMailException` - Domain is blacklisted
 - `DisposableMailException` - Domain is from a disposable email provider
-- `ExternalMailProviderException` - Failed external validation
+- `InaccessibleMailException` - Failed external validation
+- `ExternalMailProviderException` - External validation error
 
 ## Command Line Interface
 

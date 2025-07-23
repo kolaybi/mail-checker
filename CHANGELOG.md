@@ -2,6 +2,19 @@
 
 All notable changes to `kolaybi/mail-checker` will be documented in this file.
 
+## [v1.2.0](https://github.com/kolaybi/mail-checker/commits/v1.2.0) (2025-07-23)
+
+### Added
+- Enhanced MailChecker with detailed validation, batch processing, and cache management methods
+- Added singleton pattern for services to improve resource usage
+- Added timeout support for email providers
+- Added improved error handling with `InaccessibleMailException` for missing mail deliverability
+
+### Changed
+- Refactored ExternalMailService for better maintainability
+- Enhanced provider retry mechanism for more reliable service
+- Improved error handling across all validation services
+
 ## [v1.1.0](https://github.com/kolaybi/mail-checker/commits/v1.1.0) (2025-07-22)
 
 ### Added
