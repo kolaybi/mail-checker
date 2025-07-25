@@ -9,6 +9,7 @@ A Laravel package providing comprehensive e-mail validation for better email del
 - Blacklist and whitelist domain support
 - Integration with external validation services
     - [AbstractAPI](https://abstractapi.com/)
+    - [Clearout](https://clearout.io/)
     - [Emailable](https://emailable.com/)
     - [MailboxLayer](https://mailboxlayer.com/)
     - [Mailgun](https://mailgun.com/)
@@ -60,6 +61,11 @@ MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY=abstract_api,mailboxlayer,mailgun
 ABSTRACT_API_EMAIL_ENDPOINT=https://emailvalidation.abstractapi.com/v1/
 ABSTRACT_API_EMAIL_API_KEY=your_api_key
 ABSTRACT_API_EMAIL_TIMEOUT=10
+
+# Clearout configuration
+CLEAROUT_ENDPOINT=https://api.clearout.io/v2/email_verify/instant
+CLEAROUT_API_KEY=your_api_key
+CLEAROUT_TIMEOUT=10
 
 # Emailable configuration
 EMAILABLE_ENDPOINT=https://api.emailable.com/v1/verify

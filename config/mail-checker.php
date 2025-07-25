@@ -1,6 +1,7 @@
 <?php
 
 use KolayBi\Validation\Mail\Services\Providers\AbstractApi;
+use KolayBi\Validation\Mail\Services\Providers\Clearout;
 use KolayBi\Validation\Mail\Services\Providers\Emailable;
 use KolayBi\Validation\Mail\Services\Providers\MailboxLayer;
 use KolayBi\Validation\Mail\Services\Providers\Mailgun;
@@ -44,6 +45,14 @@ return [
                     'endpoint' => env('ABSTRACT_API_EMAIL_ENDPOINT', 'https://emailvalidation.abstractapi.com/v1/'),
                     'api_key'  => env('ABSTRACT_API_EMAIL_API_KEY'),
                     'timeout'  => (int) env('ABSTRACT_API_EMAIL_TIMEOUT', 10),
+                ],
+            ],
+            'clearout'    => [
+                'resolver' => Clearout::class,
+                'config'   => [
+                    'endpoint' => env('CLEAROUT_ENDPOINT', 'https://api.clearout.io/v2/email_verify/instant'),
+                    'api_key'  => env('CLEAROUT_API_KEY'),
+                    'timeout'  => (int) env('CLEAROUT_TIMEOUT', 10),
                 ],
             ],
             'emailable'    => [
