@@ -4,6 +4,7 @@ use KolayBi\Validation\Mail\Services\Providers\AbstractApi;
 use KolayBi\Validation\Mail\Services\Providers\Bouncer;
 use KolayBi\Validation\Mail\Services\Providers\Emailable;
 use KolayBi\Validation\Mail\Services\Providers\Hunter;
+use KolayBi\Validation\Mail\Services\Providers\Kickbox;
 use KolayBi\Validation\Mail\Services\Providers\MailboxLayer;
 use KolayBi\Validation\Mail\Services\Providers\Mailgun;
 use KolayBi\Validation\Mail\Services\Providers\NeverBounce;
@@ -36,7 +37,7 @@ return [
             ',',
             env(
                 'MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY',
-                'abstract_api,mailboxlayer,mailgun,neverbounce,emailable,hunter',
+                'abstract_api,mailboxlayer,mailgun,neverbounce,emailable,hunter,kickbox,bouncer',
             ),
         ),
         'providers' => [
@@ -48,7 +49,7 @@ return [
                     'timeout'  => (int) env('ABSTRACT_API_EMAIL_TIMEOUT', 10),
                 ],
             ],
-            'bouncer' => [
+            'bouncer'      => [
                 'resolver' => Bouncer::class,
                 'config'   => [
                     'endpoint' => env('BOUNCER_ENDPOINT', 'https://api.usebouncer.com/v1.1/email/verify'),
@@ -64,12 +65,20 @@ return [
                     'timeout'  => (int) env('EMAILABLE_TIMEOUT', 10),
                 ],
             ],
-            'hunter'      => [
+            'hunter'       => [
                 'resolver' => Hunter::class,
                 'config'   => [
                     'endpoint' => env('HUNTER_VALIDATION_ENDPOINT', 'https://api.hunter.io/v2/email-verifier'),
                     'api_key'  => env('HUNTER_API_KEY'),
                     'timeout'  => (int) env('HUNTER_TIMEOUT', 10),
+                ],
+            ],
+            'kickbox'      => [
+                'resolver' => Kickbox::class,
+                'config'   => [
+                    'endpoint' => env('KICKBOX_ENDPOINT', 'https://api.kickbox.com/v2/verify'),
+                    'api_key'  => env('KICKBOX_API_KEY'),
+                    'timeout'  => (int) env('KICKBOX_TIMEOUT', 10),
                 ],
             ],
             'mailboxlayer' => [

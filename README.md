@@ -12,6 +12,7 @@ A Laravel package providing comprehensive e-mail validation for better email del
     - [Bouncer](https://usebouncer.com/)
     - [Emailable](https://emailable.com/)
     - [Hunter](https://hunter.io/)
+    - [Kickbox](https://kickbox.com/)
     - [MailboxLayer](https://mailboxlayer.com/)
     - [Mailgun](https://mailgun.com/)
     - [NeverBounce](https://neverbounce.com/)
@@ -77,6 +78,11 @@ EMAILABLE_TIMEOUT=10
 HUNTER_VALIDATION_ENDPOINT=https://api.hunter.io/v2/email-verifier
 HUNTER_API_KEY=your_api_key
 HUNTER_TIMEOUT=10
+
+# Kickbox configuration
+KICKBOX_ENDPOINT=https://api.kickbox.com/v2/verify
+KICKBOX_API_KEY=your_api_key
+KICKBOX_TIMEOUT=10
 
 # MailboxLayer configuration
 MAILBOX_LAYER_ENDPOINT=https://apilayer.net/api/check
