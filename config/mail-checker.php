@@ -1,6 +1,7 @@
 <?php
 
 use KolayBi\Validation\Mail\Services\Providers\AbstractApi;
+use KolayBi\Validation\Mail\Services\Providers\Bouncer;
 use KolayBi\Validation\Mail\Services\Providers\Emailable;
 use KolayBi\Validation\Mail\Services\Providers\Hunter;
 use KolayBi\Validation\Mail\Services\Providers\MailboxLayer;
@@ -45,6 +46,14 @@ return [
                     'endpoint' => env('ABSTRACT_API_EMAIL_ENDPOINT', 'https://emailvalidation.abstractapi.com/v1/'),
                     'api_key'  => env('ABSTRACT_API_EMAIL_API_KEY'),
                     'timeout'  => (int) env('ABSTRACT_API_EMAIL_TIMEOUT', 10),
+                ],
+            ],
+            'bouncer' => [
+                'resolver' => Bouncer::class,
+                'config'   => [
+                    'endpoint' => env('BOUNCER_ENDPOINT', 'https://api.usebouncer.com/v1.1/email/verify'),
+                    'api_key'  => env('BOUNCER_API_KEY'),
+                    'timeout'  => (int) env('BOUNCER_TIMEOUT', 10),
                 ],
             ],
             'emailable'    => [

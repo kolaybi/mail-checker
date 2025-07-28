@@ -9,6 +9,7 @@ A Laravel package providing comprehensive e-mail validation for better email del
 - Blacklist and whitelist domain support
 - Integration with external validation services
     - [AbstractAPI](https://abstractapi.com/)
+    - [Bouncer](https://usebouncer.com/)
     - [Emailable](https://emailable.com/)
     - [Hunter](https://hunter.io/)
     - [MailboxLayer](https://mailboxlayer.com/)
@@ -61,6 +62,11 @@ MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY=abstract_api,mailboxlayer,mailgun
 ABSTRACT_API_EMAIL_ENDPOINT=https://emailvalidation.abstractapi.com/v1/
 ABSTRACT_API_EMAIL_API_KEY=your_api_key
 ABSTRACT_API_EMAIL_TIMEOUT=10
+
+# Bouncer configuration
+BOUNCER_ENDPOINT=https://api.usebouncer.com/v1.1/email/verify
+BOUNCER_API_KEY=your_api_key
+BOUNCER_TIMEOUT=10
 
 # Emailable configuration
 EMAILABLE_ENDPOINT=https://api.emailable.com/v1/verify
