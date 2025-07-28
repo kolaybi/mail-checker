@@ -9,6 +9,8 @@ use KolayBi\Validation\Mail\Services\Providers\MailboxLayer;
 use KolayBi\Validation\Mail\Services\Providers\Mailgun;
 use KolayBi\Validation\Mail\Services\Providers\NeverBounce;
 
+$globalTimeout = (int) env('MAIL_CHECKER_EXTERNAL_TIMEOUT', 10);
+
 return [
     'local'    => [
         'cache'      => [
@@ -46,7 +48,7 @@ return [
                 'config'   => [
                     'endpoint' => env('ABSTRACT_API_EMAIL_ENDPOINT', 'https://emailvalidation.abstractapi.com/v1/'),
                     'api_key'  => env('ABSTRACT_API_EMAIL_API_KEY'),
-                    'timeout'  => (int) env('ABSTRACT_API_EMAIL_TIMEOUT', 10),
+                    'timeout'  => (int) env('ABSTRACT_API_EMAIL_TIMEOUT', $globalTimeout),
                 ],
             ],
             'bouncer'      => [
@@ -54,7 +56,7 @@ return [
                 'config'   => [
                     'endpoint' => env('BOUNCER_ENDPOINT', 'https://api.usebouncer.com/v1.1/email/verify'),
                     'api_key'  => env('BOUNCER_API_KEY'),
-                    'timeout'  => (int) env('BOUNCER_TIMEOUT', 10),
+                    'timeout'  => (int) env('BOUNCER_TIMEOUT', $globalTimeout),
                 ],
             ],
             'emailable'    => [
@@ -62,7 +64,7 @@ return [
                 'config'   => [
                     'endpoint' => env('EMAILABLE_ENDPOINT', 'https://api.emailable.com/v1/verify'),
                     'api_key'  => env('EMAILABLE_API_KEY'),
-                    'timeout'  => (int) env('EMAILABLE_TIMEOUT', 10),
+                    'timeout'  => (int) env('EMAILABLE_TIMEOUT', $globalTimeout),
                 ],
             ],
             'hunter'       => [
@@ -70,7 +72,7 @@ return [
                 'config'   => [
                     'endpoint' => env('HUNTER_VALIDATION_ENDPOINT', 'https://api.hunter.io/v2/email-verifier'),
                     'api_key'  => env('HUNTER_API_KEY'),
-                    'timeout'  => (int) env('HUNTER_TIMEOUT', 10),
+                    'timeout'  => (int) env('HUNTER_TIMEOUT', $globalTimeout),
                 ],
             ],
             'kickbox'      => [
@@ -78,7 +80,7 @@ return [
                 'config'   => [
                     'endpoint' => env('KICKBOX_ENDPOINT', 'https://api.kickbox.com/v2/verify'),
                     'api_key'  => env('KICKBOX_API_KEY'),
-                    'timeout'  => (int) env('KICKBOX_TIMEOUT', 10),
+                    'timeout'  => (int) env('KICKBOX_TIMEOUT', $globalTimeout),
                 ],
             ],
             'mailboxlayer' => [
@@ -86,7 +88,7 @@ return [
                 'config'   => [
                     'endpoint'   => env('MAILBOX_LAYER_ENDPOINT', 'https://apilayer.net/api/check'),
                     'access_key' => env('MAILBOX_LAYER_ACCESS_KEY'),
-                    'timeout'    => (int) env('MAILBOX_LAYER_TIMEOUT', 10),
+                    'timeout'    => (int) env('MAILBOX_LAYER_TIMEOUT', $globalTimeout),
                 ],
             ],
             'mailgun'      => [
@@ -94,7 +96,7 @@ return [
                 'config'   => [
                     'endpoint' => env('MAILGUN_VALIDATION_ENDPOINT', 'https://api.mailgun.net/v4/address/validate'),
                     'api_key'  => env('MAILGUN_API_KEY'),
-                    'timeout'  => (int) env('MAILGUN_TIMEOUT', 10),
+                    'timeout'  => (int) env('MAILGUN_TIMEOUT', $globalTimeout),
                 ],
             ],
             'neverbounce'  => [
@@ -102,7 +104,7 @@ return [
                 'config'   => [
                     'endpoint' => env('NEVER_BOUNCE_VALIDATION_ENDPOINT', 'https://api.neverbounce.com/v4/single/check'),
                     'api_key'  => env('NEVER_BOUNCE_API_KEY'),
-                    'timeout'  => (int) env('NEVER_BOUNCE_TIMEOUT', 10),
+                    'timeout'  => (int) env('NEVER_BOUNCE_TIMEOUT', $globalTimeout),
                 ],
             ],
         ],
