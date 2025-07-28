@@ -142,6 +142,46 @@ if (MailChecker::isValid('user@example.com', skipExternalControl: true)) {
 }
 ```
 
+### Advanced Validation Methods
+
+The package provides granular validation methods for specific checks:
+
+```php
+// Check individual validation aspects
+if (MailChecker::isWhitelisted('user@example.com')) {
+    // Email domain is in whitelist - trusted domain
+}
+
+if (MailChecker::isBlacklisted('user@example.com')) {
+    // Email domain is explicitly blocked
+}
+
+if (MailChecker::isDisposable('user@example.com')) {
+    // Email is from a temporary/disposable email provider
+}
+
+if (MailChecker::isValidFormat('user@example.com')) {
+    // Email format passes validation checks
+}
+
+// Inverse methods for negative checks
+if (MailChecker::isNotWhitelisted('user@example.com')) {
+    // Email requires validation (not in trusted whitelist)
+}
+
+if (MailChecker::isNotBlacklisted('user@example.com')) {
+    // Email is not explicitly blocked
+}
+
+if (MailChecker::isNotDisposable('user@example.com')) {
+    // Email is from a permanent email provider
+}
+
+if (MailChecker::isInvalidFormat('user@example.com')) {
+    // Email format is invalid
+}
+```
+
 ## Exception Types
 
 The package throws specific exceptions for different validation scenarios:
