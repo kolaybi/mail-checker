@@ -14,7 +14,11 @@ trait ProviderTrait
 
     public function isReal(string $mail): bool
     {
-        $className = class_basename(__CLASS__);
+        if (null === $this->cacheService) {
+            return $this->performValidation($mail);
+        }
+
+        $className = class_basename(get_class($this));
         $serviceType = ServiceType::EXTERNAL->value;
 
         return $this->cacheService->remember(
