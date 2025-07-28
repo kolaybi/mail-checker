@@ -2,6 +2,21 @@
 
 All notable changes to `kolaybi/mail-checker` will be documented in this file.
 
+## [v1.3.0](https://github.com/kolaybi/mail-checker/commits/v1.3.0) (2025-07-28)
+
+### Added
+- Added multiple new external mail validation providers:
+  - Emailable
+  - NeverBounce
+  - Hunter
+  - Bouncer
+  - Kickbox
+- Implemented centralized global timeout setting for all external mail checker services
+
+### Improved
+- Enhanced error handling and logging for external mail deliverability checks
+- Added null check before using the cache service to prevent potential issues
+
 ## [v1.2.0](https://github.com/kolaybi/mail-checker/commits/v1.2.0) (2025-07-23)
 
 ### Added
