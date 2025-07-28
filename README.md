@@ -10,6 +10,7 @@ A Laravel package providing comprehensive e-mail validation for better email del
 - Integration with external validation services
     - [AbstractAPI](https://abstractapi.com/)
     - [Emailable](https://emailable.com/)
+    - [Hunter](https://hunter.io/)
     - [MailboxLayer](https://mailboxlayer.com/)
     - [Mailgun](https://mailgun.com/)
     - [NeverBounce](https://neverbounce.com/)
@@ -65,6 +66,11 @@ ABSTRACT_API_EMAIL_TIMEOUT=10
 EMAILABLE_ENDPOINT=https://api.emailable.com/v1/verify
 EMAILABLE_API_KEY=your_api_key
 EMAILABLE_TIMEOUT=10
+
+# Hunter configuration
+HUNTER_VALIDATION_ENDPOINT=https://api.hunter.io/v2/email-verifier
+HUNTER_API_KEY=your_api_key
+HUNTER_TIMEOUT=10
 
 # MailboxLayer configuration
 MAILBOX_LAYER_ENDPOINT=https://apilayer.net/api/check

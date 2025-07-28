@@ -2,6 +2,7 @@
 
 use KolayBi\Validation\Mail\Services\Providers\AbstractApi;
 use KolayBi\Validation\Mail\Services\Providers\Emailable;
+use KolayBi\Validation\Mail\Services\Providers\Hunter;
 use KolayBi\Validation\Mail\Services\Providers\MailboxLayer;
 use KolayBi\Validation\Mail\Services\Providers\Mailgun;
 use KolayBi\Validation\Mail\Services\Providers\NeverBounce;
@@ -34,7 +35,7 @@ return [
             ',',
             env(
                 'MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY',
-                'abstract_api,mailboxlayer,mailgun,neverbounce,emailable',
+                'abstract_api,mailboxlayer,mailgun,neverbounce,emailable,hunter',
             ),
         ),
         'providers' => [
@@ -52,6 +53,14 @@ return [
                     'endpoint' => env('EMAILABLE_ENDPOINT', 'https://api.emailable.com/v1/verify'),
                     'api_key'  => env('EMAILABLE_API_KEY'),
                     'timeout'  => (int) env('EMAILABLE_TIMEOUT', 10),
+                ],
+            ],
+            'hunter'      => [
+                'resolver' => Hunter::class,
+                'config'   => [
+                    'endpoint' => env('HUNTER_VALIDATION_ENDPOINT', 'https://api.hunter.io/v2/email-verifier'),
+                    'api_key'  => env('HUNTER_API_KEY'),
+                    'timeout'  => (int) env('HUNTER_TIMEOUT', 10),
                 ],
             ],
             'mailboxlayer' => [
