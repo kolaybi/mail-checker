@@ -78,10 +78,15 @@ class ExternalMailService
             );
         }
 
-        // If no providers were configured or all skipped without errors
-        throw new ExternalMailProviderException(
-            sprintf('No external mail providers were able to validate email [%s]', $mail),
-        );
+        // Check if we should fail when no providers are configured
+        $failIfNoProviders = Arr::get($this->config, 'fail_if_no_providers', true);
+
+        if ($failIfNoProviders) {
+            // If no providers were configured or all skipped without errors
+            throw new ExternalMailProviderException(
+                sprintf('No external mail providers were able to validate email [%s]', $mail),
+            );
+        }
     }
 
     /**

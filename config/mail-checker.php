@@ -30,19 +30,20 @@ return [
         ],
     ],
     'external' => [
-        'cache'     => [
+        'cache'                => [
             'enabled' => (bool) env('MAIL_CHECKER_EXTERNAL_CACHE_ENABLED', true),
             'ttl'     => (int) env('MAIL_CHECKER_EXTERNAL_CACHE_TTL', 60 * 60 * 24), // 1 day
             'store'   => env('MAIL_CHECKER_EXTERNAL_CACHE_STORE'),
         ],
-        'priority'  => explode(
+        'fail_if_no_providers' => (bool) env('MAIL_CHECKER_FAIL_IF_NO_PROVIDERS', true),
+        'priority'             => explode(
             ',',
             env(
                 'MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY',
                 'abstract_api,mailboxlayer,mailgun,neverbounce,emailable,hunter,kickbox,bouncer',
             ),
         ),
-        'providers' => [
+        'providers'            => [
             'abstract_api' => [
                 'resolver' => AbstractApi::class,
                 'config'   => [

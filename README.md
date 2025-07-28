@@ -56,8 +56,10 @@ MAIL_CHECKER_EXTERNAL_CACHE_ENABLED=true
 MAIL_CHECKER_EXTERNAL_CACHE_TTL=86400
 MAIL_CHECKER_EXTERNAL_CACHE_STORE=file
 
-# External provider priority
+# External provider configuration
+MAIL_CHECKER_FAIL_IF_NO_PROVIDERS=true
 MAIL_CHECKER_EXTERNAL_PROVIDER_PRIORITY=abstract_api,mailboxlayer,mailgun
+MAIL_CHECKER_EXTERNAL_TIMEOUT=10
 
 # AbstractAPI configuration
 ABSTRACT_API_EMAIL_ENDPOINT=https://emailvalidation.abstractapi.com/v1/
