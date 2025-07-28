@@ -2,6 +2,16 @@
 
 All notable changes to `kolaybi/mail-checker` will be documented in this file.
 
+## [v1.4.0](https://github.com/kolaybi/mail-checker/commits/v1.4.0) (2025-07-28)
+
+### Added
+- Added domain validation methods for whitelist, blacklist, disposable, and format checks
+- Added inverse email validation methods for whitelist, blacklist, disposable, and format checks
+
+### Improved
+- Documented advanced email validation methods in README.md
+- Refactored email validation methods for better maintainability
+
 ## [v1.3.0](https://github.com/kolaybi/mail-checker/commits/v1.3.0) (2025-07-28)
 
 ### Added
