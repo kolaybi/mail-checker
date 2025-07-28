@@ -199,6 +199,67 @@ final class MailChecker
     }
 
     /**
+     * Check if an email address is NOT whitelisted
+     *
+     * This is the inverse of isWhitelisted() - returns true if the email domain
+     * is NOT in the whitelist, meaning it requires validation checks.
+     *
+     * @param string $mail The email address to check
+     *
+     * @return bool True if the email domain is NOT in the whitelist, false otherwise
+     */
+    public static function isNotWhitelisted(string $mail): bool
+    {
+        return !self::isWhitelisted($mail);
+    }
+
+    /**
+     * Check if an email address is NOT blacklisted
+     *
+     * This is the inverse of isBlacklisted() - returns true if the email domain
+     * is NOT in the blacklist, meaning it's potentially allowed.
+     *
+     * @param string $mail The email address to check
+     *
+     * @return bool True if the email domain is NOT in the blacklist, false otherwise
+     */
+    public static function isNotBlacklisted(string $mail): bool
+    {
+        return !self::isBlacklisted($mail);
+    }
+
+    /**
+     * Check if an email address is NOT from a disposable email provider
+     *
+     * This is the inverse of isDisposable() - returns true if the email domain
+     * is NOT a known disposable email provider, meaning it's from a permanent
+     * email service.
+     *
+     * @param string $mail The email address to check
+     *
+     * @return bool True if the email domain is NOT a disposable email provider, false otherwise
+     */
+    public static function isNotDisposable(string $mail): bool
+    {
+        return !self::isDisposable($mail);
+    }
+
+    /**
+     * Check if an email format is NOT valid
+     *
+     * This is the inverse of isValidFormat() - returns true if the email format
+     * fails validation checks, useful for quickly identifying invalid emails.
+     *
+     * @param string $mail The email address to validate
+     *
+     * @return bool True if the email format is NOT valid, false otherwise
+     */
+    public static function isInvalidFormat(string $mail): bool
+    {
+        return !self::isValidFormat($mail);
+    }
+
+    /**
      * Get detailed validation result with specific failure reason
      */
     public static function getValidationResult(string $mail, bool $skipExternalControl = false): array
