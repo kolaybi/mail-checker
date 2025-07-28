@@ -98,6 +98,107 @@ final class MailChecker
     }
 
     /**
+     * Check if an email address is whitelisted
+     *
+     * Whitelisted emails are considered trusted and bypass all validation checks.
+     * This method uses lazy initialization to create the LocalDomainService instance
+     * only when needed, improving performance by avoiding unnecessary object creation.
+     *
+     * @param string $mail The email address to check
+     *
+     * @return bool True if the email domain is in the whitelist, false otherwise
+     */
+    public static function isWhitelisted(string $mail): bool
+    {
+        // Null coalescing assignment operator - creates LocalDomainService only if not already instantiated
+        self::$localDomainService ??= new LocalDomainService();
+
+        return self::$localDomainService->isWhitelisted($mail);
+    }
+
+    /**
+     * Check if an email address is blacklisted
+     *
+     * Blacklisted emails are explicitly blocked domains that should never be allowed.
+     *
+     * @param string $mail The email address to check
+     *
+     * @return bool True if the email domain is in the blacklist, false otherwise
+     */
+    public static function isBlacklisted(string $mail): bool
+    {
+        // Initialize service instance only if it hasn't been created yet
+        self::$localDomainService ??= new LocalDomainService();
+
+        return self::$localDomainService->isBlacklisted($mail);
+    }
+
+    /**
+     * Check if an email address is from a disposable email provider
+     *
+     * Disposable emails are temporary email addresses from services like 10minutemail,
+     * guerrillamail, etc. These are often used to bypass registration requirements
+     * and should typically be blocked for legitimate user accounts.
+     *
+     * @param string $mail The email address to check
+     *
+     * @return bool True if the email domain is a known disposable email provider, false otherwise
+     */
+    public static function isDisposable(string $mail): bool
+    {
+        // Ensure LocalDomainService is instantiated using singleton pattern
+        self::$localDomainService ??= new LocalDomainService();
+
+        return self::$localDomainService->isDisposable($mail);
+    }
+
+    /**
+     * Validate email format using comprehensive checks
+     *
+     * This method performs multiple validation layers before using PHP's built-in
+     * email validation to catch common issues and improve performance by failing
+     * fast on obviously invalid emails.
+     *
+     * @param string $mail The email address to validate
+     *
+     * @return bool True if the email format is valid, false otherwise
+     */
+    public static function isValidFormat(string $mail): bool
+    {
+        // Perform fast preliminary checks to reject obviously invalid emails
+        // This avoids the overhead of filter_var() for clearly invalid input
+        if (
+            // RFC 5321 specifies maximum email length of 320 characters
+            Str::length($mail) > 320
+
+            // Minimum realistic email length (a@b.c = 5 characters)
+            || Str::length($mail) < 5
+
+            // Must contain exactly one @ symbol
+            || !str_contains($mail, '@')
+
+            // Cannot start with @ symbol (invalid format)
+            || str_starts_with($mail, '@')
+
+            // Cannot end with @ symbol (missing domain)
+            || str_ends_with($mail, '@')
+
+            // Must contain exactly one @ symbol (not zero, not multiple)
+            || 1 !== substr_count($mail, '@')
+
+            // Reject emails containing quotes (often used in complex/problematic formats)
+            || Str::contains($mail, '"')
+        ) {
+            return false;
+        }
+
+        // Use PHP's built-in email validation as the final check
+        // filter_var with FILTER_VALIDATE_EMAIL follows RFC 5322 standards
+        // Returns false on invalid email, so we check that it's NOT false
+        return false !== filter_var($mail, FILTER_VALIDATE_EMAIL);
+    }
+
+    /**
      * Get detailed validation result with specific failure reason
      */
     public static function getValidationResult(string $mail, bool $skipExternalControl = false): array
@@ -150,22 +251,5 @@ final class MailChecker
     {
         self::$localDomainService = null;
         self::$externalMailService = null;
-    }
-
-    private static function isValidFormat(string $mail): bool
-    {
-        if (
-            Str::length($mail) > 320
-            || Str::length($mail) < 5
-            || !str_contains($mail, '@')
-            || str_starts_with($mail, '@')
-            || str_ends_with($mail, '@')
-            || 1 !== substr_count($mail, '@')
-            || Str::contains($mail, '"')
-        ) {
-            return false;
-        }
-
-        return false !== filter_var($mail, FILTER_VALIDATE_EMAIL);
     }
 }
