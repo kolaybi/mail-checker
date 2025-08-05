@@ -2,6 +2,11 @@
 
 All notable changes to `kolaybi/mail-checker` will be documented in this file.
 
+## [v1.5.2](https://github.com/kolaybi/mail-checker/commits/v1.5.2) (2025-08-05)
+
+### Changed
+- Refactored email validation to use instance methods and improve service initialization
+
 ## [v1.5.1](https://github.com/kolaybi/mail-checker/commits/v1.5.1) (2025-08-05)
 
 ### Fixed
