@@ -52,6 +52,7 @@ class ServiceProvider extends IlluminateServiceProvider implements DeferrablePro
 
             $this->optimizes(
                 clear: 'mail-checker:cache-clear',
+                key: 'mail-checker',
             );
         }
     }

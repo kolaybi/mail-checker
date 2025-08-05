@@ -3,6 +3,7 @@
 namespace KolayBi\Validation\Mail\Console;
 
 use Illuminate\Console\Command;
+use KolayBi\Validation\Mail\Enums\ListType;
 use KolayBi\Validation\Mail\Enums\ServiceType;
 use KolayBi\Validation\Mail\Services\ExternalMailService;
 use KolayBi\Validation\Mail\Services\LocalDomainService;
@@ -21,17 +22,17 @@ class ClearMailCache extends Command
      */
     public function handle(): int
     {
-        $type = $this->option('type') ?? ServiceType::ALL->value;
-        $domainType = $this->option('domain-type');
+        $type = ServiceType::tryFrom($this->option('type')) ?? ServiceType::ALL;
+        $domainType = ListType::tryFrom($this->option('domain-type'));
 
         $localDomainService = new LocalDomainService();
         $externalMailService = new ExternalMailService();
 
         switch ($type) {
-            case ServiceType::LOCAL->value:
+            case ServiceType::LOCAL:
                 $localDomainService->clearCache($domainType);
                 break;
-            case ServiceType::EXTERNAL->value:
+            case ServiceType::EXTERNAL:
                 $externalMailService->clearCache();
                 break;
             default:
@@ -40,6 +41,6 @@ class ClearMailCache extends Command
                 break;
         }
 
-        return self::SUCCESS;
+        return Command::SUCCESS;
     }
 }

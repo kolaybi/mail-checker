@@ -4,6 +4,7 @@
   "minimum-stability": "stable",
   "license": "proprietary",
   "require": {
+    "php": "^8.4",
     "illuminate/support": "^12",
     "illuminate/console": "^12"
   },

@@ -5,9 +5,12 @@ namespace KolayBi\Validation\Mail\Console;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use KolayBi\Validation\Mail\Enums\ListType;
+use KolayBi\Validation\Mail\Enums\ServiceType;
 use Throwable;
 
 class UpdateDisposableDomains extends Command implements Isolatable
@@ -25,20 +28,30 @@ class UpdateDisposableDomains extends Command implements Isolatable
         $this->config = Config::get('mail-checker.local.disposable');
     }
 
-    public function handle(): void
+    public function handle(): int
     {
         $domains = $this->fetchDomains();
         if (empty($domains)) {
-            return;
+            return Command::INVALID;
         }
 
         if (!$this->save($domains)) {
             $this->error('Could not write disposable domains to storage. Aborting...');
 
-            return;
+            return Command::FAILURE;
         }
 
+        Artisan::call(
+            'mail-checker:cache-clear',
+            [
+                '--type'        => ServiceType::LOCAL->value,
+                '--domain-type' => ListType::DISPOSABLE->value,
+            ],
+        );
+
         $this->info('Disposable domains list has been updated successfully.');
+
+        return Command::SUCCESS;
     }
 
     private function fetchDomains(): array

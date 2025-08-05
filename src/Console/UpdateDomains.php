@@ -4,8 +4,11 @@ namespace KolayBi\Validation\Mail\Console;
 
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use KolayBi\Validation\Mail\Enums\ListType;
+use KolayBi\Validation\Mail\Enums\ServiceType;
 
 class UpdateDomains extends Command
 {
@@ -26,7 +29,7 @@ class UpdateDomains extends Command
         $this->listType = $this->option('type');
 
         // Validate list type
-        if (!in_array($this->listType, ['whitelist', 'blacklist'])) {
+        if (!in_array($this->listType, [ListType::WHITELIST->value, ListType::BLACKLIST->value])) {
             $this->error('Invalid type. Must be either "whitelist" or "blacklist".');
 
             return Command::FAILURE;
@@ -85,6 +88,14 @@ class UpdateDomains extends Command
             $this->newLine();
             $this->info('All operations completed successfully.');
         }
+
+        Artisan::call(
+            'mail-checker:cache-clear',
+            [
+                '--type'        => ServiceType::LOCAL->value,
+                '--domain-type' => $this->listType,
+            ],
+        );
 
         return Command::SUCCESS;
     }
