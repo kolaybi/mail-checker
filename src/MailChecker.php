@@ -17,8 +17,8 @@ use Psr\SimpleCache\InvalidArgumentException;
 
 final class MailChecker
 {
-    private static ?LocalDomainService $localDomainService = null;
-    private static ?ExternalMailService $externalMailService = null;
+    private ?LocalDomainService $localDomainService = null;
+    private ?ExternalMailService $externalMailService = null;
 
     /**
      * Perform comprehensive email validation checks
@@ -44,38 +44,7 @@ final class MailChecker
      */
     public static function check(string $mail, bool $skipExternalControl = false): void
     {
-        $mail = trim(strtolower($mail));
-
-        if (empty($mail)) {
-            throw new EmptyMailException();
-        }
-
-        // Use singleton pattern to avoid creating new instances on each call
-        self::$localDomainService ??= new LocalDomainService();
-
-        if (self::$localDomainService->isWhitelisted($mail)) {
-            return;
-        }
-
-        if (!self::isValidFormat($mail)) {
-            throw new InvalidMailException();
-        }
-
-        if (self::$localDomainService->isBlacklisted($mail)) {
-            throw new BlacklistedMailException();
-        }
-
-        if (self::$localDomainService->isDisposable($mail)) {
-            throw new DisposableMailException();
-        }
-
-        if ($skipExternalControl) {
-            return;
-        }
-
-        // Only initialize external service when actually needed
-        self::$externalMailService ??= new ExternalMailService();
-        self::$externalMailService->checkDeliverability($mail);
+        self::getInstance()->performCheck($mail, $skipExternalControl);
     }
 
     /**
@@ -110,10 +79,7 @@ final class MailChecker
      */
     public static function isWhitelisted(string $mail): bool
     {
-        // Null coalescing assignment operator - creates LocalDomainService only if not already instantiated
-        self::$localDomainService ??= new LocalDomainService();
-
-        return self::$localDomainService->isWhitelisted($mail);
+        return self::getInstance()->getLocalDomainService()->isWhitelisted($mail);
     }
 
     /**
@@ -127,10 +93,7 @@ final class MailChecker
      */
     public static function isBlacklisted(string $mail): bool
     {
-        // Initialize service instance only if it hasn't been created yet
-        self::$localDomainService ??= new LocalDomainService();
-
-        return self::$localDomainService->isBlacklisted($mail);
+        return self::getInstance()->getLocalDomainService()->isBlacklisted($mail);
     }
 
     /**
@@ -146,10 +109,7 @@ final class MailChecker
      */
     public static function isDisposable(string $mail): bool
     {
-        // Ensure LocalDomainService is instantiated using singleton pattern
-        self::$localDomainService ??= new LocalDomainService();
-
-        return self::$localDomainService->isDisposable($mail);
+        return self::getInstance()->getLocalDomainService()->isDisposable($mail);
     }
 
     /**
@@ -299,18 +259,67 @@ final class MailChecker
      */
     public static function clearAllCaches(): bool
     {
-        $localResult = self::$localDomainService?->clearCache() ?? true;
-        $externalResult = self::$externalMailService?->clearCache() ?? true;
+        $instance = self::getInstance();
+        $localResult = $instance->localDomainService?->clearCache() ?? true;
+        $externalResult = $instance->externalMailService?->clearCache() ?? true;
 
         return $localResult && $externalResult;
     }
 
     /**
-     * Reset singleton instances (useful for testing)
+     * Get a fresh MailChecker instance
+     * This ensures services are created with current configuration
      */
-    public static function reset(): void
+    private static function getInstance(): self
     {
-        self::$localDomainService = null;
-        self::$externalMailService = null;
+        return new self();
+    }
+
+    /**
+     * Perform the actual validation check
+     *
+     * @throws AbstractMailException
+     */
+    private function performCheck(string $mail, bool $skipExternalControl): void
+    {
+        $mail = trim(strtolower($mail));
+
+        if (empty($mail)) {
+            throw new EmptyMailException();
+        }
+
+        $localService = $this->getLocalDomainService();
+
+        if ($localService->isWhitelisted($mail)) {
+            return;
+        }
+
+        if (!self::isValidFormat($mail)) {
+            throw new InvalidMailException();
+        }
+
+        if ($localService->isBlacklisted($mail)) {
+            throw new BlacklistedMailException();
+        }
+
+        if ($localService->isDisposable($mail)) {
+            throw new DisposableMailException();
+        }
+
+        if ($skipExternalControl) {
+            return;
+        }
+
+        $this->getExternalMailService()->checkDeliverability($mail);
+    }
+
+    private function getLocalDomainService(): LocalDomainService
+    {
+        return $this->localDomainService ??= new LocalDomainService();
+    }
+
+    private function getExternalMailService(): ExternalMailService
+    {
+        return $this->externalMailService ??= new ExternalMailService();
     }
 }

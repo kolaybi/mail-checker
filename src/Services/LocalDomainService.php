@@ -79,6 +79,10 @@ class LocalDomainService
 
     private function getDomains(string $filePath): array
     {
+        if (empty($filePath)) {
+            return [];
+        }
+
         // Cache the domain lists as they don't change frequently
         return $this->cacheService->remember(
             "domains:{$filePath}",
@@ -91,6 +95,10 @@ class LocalDomainService
      */
     private function contains(string $mail, array $domains): bool
     {
+        if (empty($domains)) {
+            return false;
+        }
+
         // Parse the mail to its top level domain.
         preg_match(
             '/([^.\/]+)(\.[^.\/]+)((\.[^.\/]+)+)?$/',

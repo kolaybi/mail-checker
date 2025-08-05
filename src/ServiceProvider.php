@@ -2,13 +2,12 @@
 
 namespace KolayBi\Validation\Mail;
 
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use KolayBi\Validation\Mail\Console\ClearMailCache;
 use KolayBi\Validation\Mail\Console\UpdateDisposableDomains;
 use KolayBi\Validation\Mail\Console\UpdateDomains;
 
-class ServiceProvider extends IlluminateServiceProvider implements DeferrableProvider
+class ServiceProvider extends IlluminateServiceProvider
 {
     public function boot(): void
     {
@@ -18,16 +17,12 @@ class ServiceProvider extends IlluminateServiceProvider implements DeferrablePro
 
     public function register(): void
     {
-        // Register the main service
-        $this->app->singleton(MailChecker::class, fn($app) => new MailChecker());
-
         $this->mergeConfigFrom(__DIR__ . '/../config/mail-checker.php', 'mail-checker');
     }
 
     public function provides(): array
     {
         return [
-            MailChecker::class,
             ClearMailCache::class,
             UpdateDisposableDomains::class,
             UpdateDomains::class,

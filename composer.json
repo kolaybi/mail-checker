@@ -1,8 +1,13 @@
 {
   "name": "kolaybi/mail-checker",
   "description": "A Laravel package providing e-mail validation for better email delivery.",
-  "minimum-stability": "stable",
+  "keywords": ["mail", "validation", "laravel", "kolaybi"],
   "license": "proprietary",
+  "type": "library",
+  "support": {
+    "issues": "https://github.com/kolaybi/mail-checker/issues",
+    "source": "https://github.com/kolaybi/mail-checker"
+  },
   "require": {
     "php": "^8.4",
     "illuminate/support": "^12",
@@ -15,6 +20,11 @@
     "psr-4": {
       "KolayBi\\Validation\\Mail\\": "src/"
     }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true
   },
   "scripts": {
     "pint": "./vendor/bin/pint --dirty --parallel"
