@@ -2,6 +2,15 @@
 
 All notable changes to `kolaybi/mail-checker` will be documented in this file.
 
+## [v1.5.1](https://github.com/kolaybi/mail-checker/commits/v1.5.1) (2025-08-05)
+
+### Fixed
+- Fixed cache invalidation after domain updates in UpdateDomains and UpdateDisposableDomains commands
+- Improved type handling in ClearMailCache command
+
+### Added
+- Added explicit PHP 8.4 requirement in composer.json
+
 ## [v1.5.0](https://github.com/kolaybi/mail-checker/commits/v1.5.0) (2025-07-28)
 
 ### Added
