@@ -22,7 +22,7 @@ readonly class AbstractApi implements ExternalMailProviderInterface
             ->withQuery([
                 'api_key'      => Arr::get($this->config, 'api_key'),
                 'email'        => $mail,
-                'auto_correct' => 'false',
+                'auto_correct' => '0',
             ])
             ->value();
 
