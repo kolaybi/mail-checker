@@ -101,6 +101,7 @@ class ExternalMailService
             ->mapWithKeys(fn($provider) => [
                 Arr::get($provider, 'resolver') => Arr::get($provider, 'config', []),
             ])
+            ->filter(fn(array $config) => !empty($config['api_key'] ?? $config['access_key'] ?? null))
             ->toArray();
     }
 
