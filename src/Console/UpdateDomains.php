@@ -22,7 +22,7 @@ class UpdateDomains extends Command
 
     private string $storagePath;
 
-    private string $listType;
+    private ?string $listType;
 
     public function handle(): int
     {
