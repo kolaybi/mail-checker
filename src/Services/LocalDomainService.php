@@ -6,7 +6,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use KolayBi\Validation\Mail\Enums\ListType;
-use KolayBi\Validation\Mail\Enums\ServiceType;
 
 class LocalDomainService
 {
@@ -46,12 +45,7 @@ class LocalDomainService
 
     private function is(string $mail, ListType $listType): bool
     {
-        $serviceType = ServiceType::LOCAL->value;
-
-        return $this->cacheService->remember(
-            "{$serviceType}:{$listType->value}:{$mail}",
-            fn() => $this->checkDomainList($mail, $listType),
-        );
+        return $this->checkDomainList($mail, $listType);
     }
 
     private function checkDomainList(string $mail, ListType $listType): bool
