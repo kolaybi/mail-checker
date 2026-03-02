@@ -35,7 +35,7 @@ readonly class Bouncer implements ExternalMailProviderInterface
         $result = $response->json();
 
         if (array_key_exists('status', $result)) {
-            return self::UNDELIVERABLE !== Arr::get($result, 'state');
+            return self::UNDELIVERABLE !== Arr::get($result, 'status');
         }
 
         throw new BouncerExternalMailProviderException('Unknown error');
