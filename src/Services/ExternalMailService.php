@@ -4,12 +4,10 @@ namespace KolayBi\Validation\Mail\Services;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
-use KolayBi\Validation\Mail\Enums\ServiceType;
 use KolayBi\Validation\Mail\Exceptions\AbstractMailException;
 use KolayBi\Validation\Mail\Exceptions\ExternalMailProviderException;
 use KolayBi\Validation\Mail\Exceptions\InaccessibleMailException;
 use KolayBi\Validation\Mail\Services\Providers\ExternalMailProviderInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 use Throwable;
 
 class ExternalMailService
@@ -89,12 +87,9 @@ class ExternalMailService
         }
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function clearCache(): bool
     {
-        return $this->cacheService->flush(ServiceType::EXTERNAL->value);
+        return $this->cacheService->flush();
     }
 
     private function getProviders(): array

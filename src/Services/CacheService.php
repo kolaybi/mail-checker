@@ -4,7 +4,6 @@ namespace KolayBi\Validation\Mail\Services;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Cache;
-use Psr\SimpleCache\InvalidArgumentException;
 
 readonly class CacheService
 {
@@ -36,22 +35,13 @@ readonly class CacheService
         return $this->cache->forget($this->getCacheKey($key));
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
-    public function flush(?string $cacheKey = null): bool
+    public function flush(): bool
     {
         if (!$this->enabled) {
             return true;
         }
 
-        // Flush all mail-checker related cache keys
-        return $this->cache->deleteMultiple(
-            collect($this->cache->getMultiple([]))
-                ->keys()
-                ->filter(fn($key) => str_starts_with($key, 'mail_checker:' . $cacheKey))
-                ->toArray(),
-        );
+        return $this->cache->flush();
     }
 
     private function getCacheKey(string $key): string
