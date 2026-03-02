@@ -13,7 +13,7 @@ use KolayBi\Validation\Mail\Enums\ServiceType;
 class UpdateDomains extends Command
 {
     protected $signature = 'mail-checker:update-domains
-                            {--type=whitelist : Domain list type (whitelist|blacklist)}
+                            {--type= : Domain list type (whitelist|blacklist)}
                             {--add=* : Add domains to list}
                             {--remove=* : Remove domains from list}
                             {--list : List all domains in the specified type}';
