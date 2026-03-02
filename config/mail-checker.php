@@ -26,7 +26,7 @@ return [
         ],
         'disposable' => [
             'storage_path' => env('MAIL_CHECKER_DISPOSABLE_STORAGE_PATH', 'data/domains/disposable_domains.json'),
-            'url'          => env('MAIL_CHECKER_DISPOSABLE_URL', 'https://rawgit.com/andreis/disposable-email-domains/master/domains.json'),
+            'url'          => env('MAIL_CHECKER_DISPOSABLE_URL', 'https://raw.githubusercontent.com/andreis/disposable-email-domains/master/domains.json'),
         ],
     ],
     'external' => [
