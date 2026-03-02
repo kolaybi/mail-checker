@@ -39,25 +39,9 @@ class LocalDomainService
         return $this->is($mail, ListType::DISPOSABLE);
     }
 
-    /**
-     * Clear domain cache for a specific list type or all lists
-     */
-    public function clearCache(?ListType $listType = null): bool
+    public function clearCache(): bool
     {
-        if ($listType) {
-            $path = Arr::get($this->config, "{$listType->value}.storage_path");
-
-            return $this->cacheService->forget("domains:{$path}");
-        }
-
-        // Clear all domain caches
-        $result = true;
-        foreach (ListType::cases() as $type) {
-            $path = Arr::get($this->config, "{$type->value}.storage_path");
-            $result = $result && $this->cacheService->forget("domains:{$path}");
-        }
-
-        return $result;
+        return $this->cacheService->flush();
     }
 
     private function is(string $mail, ListType $listType): bool

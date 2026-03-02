@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use KolayBi\Validation\Mail\Enums\ListType;
 use KolayBi\Validation\Mail\Enums\ServiceType;
 use Throwable;
 
@@ -43,10 +42,7 @@ class UpdateDisposableDomains extends Command implements Isolatable
 
         Artisan::call(
             'mail-checker:cache-clear',
-            [
-                '--type'        => ServiceType::LOCAL->value,
-                '--domain-type' => ListType::DISPOSABLE->value,
-            ],
+            ['--type' => ServiceType::LOCAL->value],
         );
 
         $this->info('Disposable domains list has been updated successfully.');

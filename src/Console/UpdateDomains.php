@@ -91,10 +91,7 @@ class UpdateDomains extends Command
 
         Artisan::call(
             'mail-checker:cache-clear',
-            [
-                '--type'        => ServiceType::LOCAL->value,
-                '--domain-type' => $this->listType,
-            ],
+            ['--type' => ServiceType::LOCAL->value],
         );
 
         return Command::SUCCESS;
