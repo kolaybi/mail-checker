@@ -229,7 +229,7 @@ final class MailChecker
             return [
                 'valid' => true,
             ];
-        } catch (AbstractMailException $e) {
+        } catch (Exception $e) {
             return [
                 'valid'   => false,
                 'reason'  => class_basename($e),
