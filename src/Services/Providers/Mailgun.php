@@ -18,13 +18,14 @@ readonly class Mailgun implements ExternalMailProviderInterface
     {
         $url = Uri::of(Arr::get($this->config, 'endpoint'))
             ->withQuery([
-                'api_key'              => Arr::get($this->config, 'api_key'),
                 'address'              => $mail,
                 'mailbox_verification' => 'true',
             ])
             ->value();
 
-        $response = Http::timeout(Arr::get($this->config, 'timeout'))->get($url);
+        $response = Http::withBasicAuth('api', Arr::get($this->config, 'api_key'))
+            ->timeout(Arr::get($this->config, 'timeout'))
+            ->get($url);
 
         if (!$response->successful()) {
             throw new MailgunExternalMailProviderException('HTTP request failed', $response->status());
