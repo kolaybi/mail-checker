@@ -16,7 +16,7 @@ return [
         'cache'      => [
             'enabled' => (bool) env('MAIL_CHECKER_LOCAL_CACHE_ENABLED', true),
             'ttl'     => (int) env('MAIL_CHECKER_LOCAL_CACHE_TTL', 60 * 60 * 24 * 7), // 1 week
-            'store'   => env('MAIL_CHECKER_LOCAL_CACHE_STORE'),
+            'store'   => env('MAIL_CHECKER_LOCAL_CACHE_STORE', 'mail-checker'),
         ],
         'whitelist'  => [
             'storage_path' => env('MAIL_CHECKER_WHITELIST_STORAGE_PATH', 'data/domains/whitelisted_domains.json'),
@@ -33,7 +33,7 @@ return [
         'cache'                => [
             'enabled' => (bool) env('MAIL_CHECKER_EXTERNAL_CACHE_ENABLED', true),
             'ttl'     => (int) env('MAIL_CHECKER_EXTERNAL_CACHE_TTL', 60 * 60 * 24), // 1 day
-            'store'   => env('MAIL_CHECKER_EXTERNAL_CACHE_STORE'),
+            'store'   => env('MAIL_CHECKER_EXTERNAL_CACHE_STORE', 'mail-checker'),
         ],
         'fail_if_no_providers' => (bool) env('MAIL_CHECKER_FAIL_IF_NO_PROVIDERS', false),
         'priority'             => explode(

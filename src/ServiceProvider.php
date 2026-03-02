@@ -18,6 +18,13 @@ class ServiceProvider extends IlluminateServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/mail-checker.php', 'kolaybi.mail-checker');
+
+        $this->app->booting(function () {
+            $this->app['config']->set('cache.stores.mail-checker', [
+                'driver' => 'file',
+                'path'   => storage_path('framework/cache/mail-checker'),
+            ]);
+        });
     }
 
     private function bootConfig(): void
