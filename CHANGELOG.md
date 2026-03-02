@@ -2,6 +2,48 @@
 
 All notable changes to `kolaybi/mail-checker` will be documented in this file.
 
+## [v2.0.0](https://github.com/kolaybi/mail-checker/commits/v2.0.0) (2026-03-03)
+
+### Breaking
+- Config key changed from `mail-checker` to `kolaybi.mail-checker`
+- Config file publishes to `config/kolaybi/mail-checker.php`
+- Renamed `MailableExternalMailProviderException` to `EmailableExternalMailProviderException`
+- Removed `--domain-type` option from `mail-checker:cache-clear` command
+- `LocalDomainService::clearCache()` no longer accepts a `$listType` parameter
+- `CacheService::flush()` no longer accepts a `$cacheKey` parameter
+
+### Fixed
+- Providers now respect priority order from config (was silently ignored)
+- Bouncer and Emailable providers using wrong case for `undeliverable` status (all emails were passing)
+- Bouncer provider reading wrong response key (`state` instead of `status`)
+- Mailgun provider now uses HTTP Basic Auth instead of query param for API key
+- AbstractApi `auto_correct` param sent as proper falsy value
+- Subdomain emails now correctly match domain lists (e.g. `mail.spam.com` matches `spam.com`)
+- `clearAllCaches()` was always returning true due to null services
+- `CacheService::flush()` was broken (using `getMultiple([])` which returns empty)
+- `fail_if_no_providers` check was unreachable when providers were configured but all failed
+- Cache invalidation now properly clears per-email results
+- `getValidationResult()` exception handling aligned with `isValid()`
+- Nullable type for `$listType` property in `UpdateDomains` command
+- Default values added to `CacheService` constructor to prevent TypeError on missing config
+
+### Added
+- Dedicated `mail-checker` cache store to isolate flush from application cache
+- Test suite with Pest and Orchestra Testbench (137 tests, 100% coverage)
+- Success output to `mail-checker:cache-clear` command
+- Null API key filtering — providers without configured keys are skipped
+
+### Changed
+- `--type` option is now required in `mail-checker:update-domains` command (was defaulting to `whitelist`)
+- `fail_if_no_providers` defaults to `false` in config and service logic
+- Disposable domains are now sorted and pretty-printed on save
+- Removed dead `provides()` method from ServiceProvider
+- Removed `Isolatable` from `UpdateDisposableDomains`
+- Removed redundant per-email cache layer in `LocalDomainService`
+- Replaced dead rawgit.com URL with raw.githubusercontent.com
+- Updated `get_class($this)` to `$this::class` in ProviderTrait
+- Removed dead code in `UpdateDomains` (redundant regex check, impossible `json_encode` guard)
+
 ## [v1.5.2](https://github.com/kolaybi/mail-checker/commits/v1.5.2) (2025-08-05)
 
 ### Changed
