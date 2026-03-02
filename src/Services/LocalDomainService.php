@@ -17,8 +17,8 @@ class LocalDomainService
     {
         $this->config = Config::get('kolaybi.mail-checker.local', []);
         $this->cacheService = new CacheService(
-            Arr::get($this->config, 'cache.ttl'),
-            Arr::get($this->config, 'cache.enabled'),
+            (int) Arr::get($this->config, 'cache.ttl', 604800),
+            (bool) Arr::get($this->config, 'cache.enabled', true),
             Arr::get($this->config, 'cache.store'),
         );
     }

@@ -10,8 +10,8 @@ readonly class CacheService
     private CacheRepository $cache;
 
     public function __construct(
-        private int $ttl,
-        private bool $enabled,
+        private int $ttl = 3600,
+        private bool $enabled = true,
         ?string $cacheStore = null,
     ) {
         $this->cache = Cache::store($cacheStore);
