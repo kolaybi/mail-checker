@@ -34,6 +34,8 @@ class ClearMailCache extends Command
                 break;
         }
 
+        $this->info("Mail checker {$type->value} cache cleared.");
+
         return Command::SUCCESS;
     }
 }
