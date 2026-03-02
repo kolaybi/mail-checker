@@ -20,6 +20,54 @@ final class MailChecker
     private ?ExternalMailService $externalMailService = null;
 
     /**
+     * Perform the actual validation check
+     *
+     * @throws AbstractMailException
+     */
+    private function performCheck(string $mail, bool $skipExternalControl): void
+    {
+        $mail = trim(strtolower($mail));
+
+        if (empty($mail)) {
+            throw new EmptyMailException();
+        }
+
+        $localService = $this->getLocalDomainService();
+
+        if ($localService->isWhitelisted($mail)) {
+            return;
+        }
+
+        if (!self::isValidFormat($mail)) {
+            throw new InvalidMailException();
+        }
+
+        if ($localService->isBlacklisted($mail)) {
+            throw new BlacklistedMailException();
+        }
+
+        if ($localService->isDisposable($mail)) {
+            throw new DisposableMailException();
+        }
+
+        if ($skipExternalControl) {
+            return;
+        }
+
+        $this->getExternalMailService()->checkDeliverability($mail);
+    }
+
+    private function getLocalDomainService(): LocalDomainService
+    {
+        return $this->localDomainService ??= new LocalDomainService();
+    }
+
+    private function getExternalMailService(): ExternalMailService
+    {
+        return $this->externalMailService ??= new ExternalMailService();
+    }
+
+    /**
      * Perform comprehensive email validation checks
      *
      * Validation order:
@@ -270,53 +318,5 @@ final class MailChecker
     private static function getInstance(): self
     {
         return new self();
-    }
-
-    /**
-     * Perform the actual validation check
-     *
-     * @throws AbstractMailException
-     */
-    private function performCheck(string $mail, bool $skipExternalControl): void
-    {
-        $mail = trim(strtolower($mail));
-
-        if (empty($mail)) {
-            throw new EmptyMailException();
-        }
-
-        $localService = $this->getLocalDomainService();
-
-        if ($localService->isWhitelisted($mail)) {
-            return;
-        }
-
-        if (!self::isValidFormat($mail)) {
-            throw new InvalidMailException();
-        }
-
-        if ($localService->isBlacklisted($mail)) {
-            throw new BlacklistedMailException();
-        }
-
-        if ($localService->isDisposable($mail)) {
-            throw new DisposableMailException();
-        }
-
-        if ($skipExternalControl) {
-            return;
-        }
-
-        $this->getExternalMailService()->checkDeliverability($mail);
-    }
-
-    private function getLocalDomainService(): LocalDomainService
-    {
-        return $this->localDomainService ??= new LocalDomainService();
-    }
-
-    private function getExternalMailService(): ExternalMailService
-    {
-        return $this->externalMailService ??= new ExternalMailService();
     }
 }
