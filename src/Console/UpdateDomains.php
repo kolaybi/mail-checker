@@ -251,13 +251,6 @@ class UpdateDomains extends Command
             return false;
         }
 
-        // Additional regex check for proper domain format
-        $domainPattern = '/^[a-z0-9]([a-z0-9\-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9\-]{0,61}[a-z0-9])?)*$/i';
-
-        if (!preg_match($domainPattern, $domain)) {
-            return false;
-        }
-
         // Check for minimum domain structure (at least one dot for TLD)
         return !(substr_count($domain, '.') < 1);
     }
@@ -271,17 +264,11 @@ class UpdateDomains extends Command
             // Ensure storage directory exists
             $this->ensureStorageDirectoryExists();
 
-            // Convert to JSON with pretty formatting
-            $jsonData = json_encode(array_values($domains), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-
-            if (false === $jsonData) {
-                $this->error('Failed to encode domains to JSON.');
-
-                return false;
-            }
-
             // Use Storage facade to save the file
-            $saved = Storage::put($this->storagePath, $jsonData);
+            $saved = Storage::put(
+                $this->storagePath,
+                json_encode(array_values($domains), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+            );
 
             if (!$saved) {
                 $this->error('Failed to write domains to storage file.');

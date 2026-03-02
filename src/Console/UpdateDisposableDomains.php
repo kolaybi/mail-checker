@@ -78,6 +78,11 @@ class UpdateDisposableDomains extends Command
 
         $this->info("Saving disposable domains to {$storagePath}");
 
-        return Storage::put($storagePath, json_encode($data));
+        sort($data);
+
+        return Storage::put(
+            $storagePath,
+            json_encode(array_values($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+        );
     }
 }
