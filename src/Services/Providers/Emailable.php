@@ -5,7 +5,7 @@ namespace KolayBi\Validation\Mail\Services\Providers;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Uri;
-use KolayBi\Validation\Mail\Exceptions\MailableExternalMailProviderException;
+use KolayBi\Validation\Mail\Exceptions\EmailableExternalMailProviderException;
 
 readonly class Emailable implements ExternalMailProviderInterface
 {
@@ -14,7 +14,7 @@ readonly class Emailable implements ExternalMailProviderInterface
     private const string UNDELIVERABLE = 'UNDELIVERABLE';
 
     /**
-     * @throws MailableExternalMailProviderException
+     * @throws EmailableExternalMailProviderException
      */
     private function performValidation(string $mail): bool
     {
@@ -28,7 +28,7 @@ readonly class Emailable implements ExternalMailProviderInterface
         $response = Http::timeout(Arr::get($this->config, 'timeout'))->get($url);
 
         if (!$response->successful()) {
-            throw new MailableExternalMailProviderException('HTTP request failed', $response->status());
+            throw new EmailableExternalMailProviderException('HTTP request failed', $response->status());
         }
 
         $result = $response->json();
@@ -37,6 +37,6 @@ readonly class Emailable implements ExternalMailProviderInterface
             return self::UNDELIVERABLE !== Arr::get($result, 'state');
         }
 
-        throw new MailableExternalMailProviderException('Unknown error');
+        throw new EmailableExternalMailProviderException('Unknown error');
     }
 }
