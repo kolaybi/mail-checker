@@ -79,7 +79,7 @@ class ExternalMailService
         }
 
         // Check if we should fail when no providers are configured
-        $failIfNoProviders = Arr::get($this->config, 'fail_if_no_providers', true);
+        $failIfNoProviders = Arr::get($this->config, 'fail_if_no_providers', false);
 
         if ($failIfNoProviders) {
             // If no providers were configured or all skipped without errors

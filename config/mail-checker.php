@@ -35,7 +35,7 @@ return [
             'ttl'     => (int) env('MAIL_CHECKER_EXTERNAL_CACHE_TTL', 60 * 60 * 24), // 1 day
             'store'   => env('MAIL_CHECKER_EXTERNAL_CACHE_STORE'),
         ],
-        'fail_if_no_providers' => (bool) env('MAIL_CHECKER_FAIL_IF_NO_PROVIDERS', true),
+        'fail_if_no_providers' => (bool) env('MAIL_CHECKER_FAIL_IF_NO_PROVIDERS', false),
         'priority'             => explode(
             ',',
             env(
