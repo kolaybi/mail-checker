@@ -109,7 +109,7 @@ class UpdateDomains extends Command
 
         $this->info("Adding domains to {$this->listType}: " . implode(', ', $validDomains));
 
-        $existingDomains = Storage::json($this->storagePath) ?? [];
+        $existingDomains = (array) (Storage::json($this->storagePath) ?? []);
 
         // Check for duplicates before adding
         $newDomains = array_diff($validDomains, $existingDomains);
@@ -150,7 +150,7 @@ class UpdateDomains extends Command
 
         $this->info("Removing domains from {$this->listType}: " . implode(', ', $validDomains));
 
-        $existingDomains = Storage::json($this->storagePath) ?? [];
+        $existingDomains = (array) (Storage::json($this->storagePath) ?? []);
 
         if (empty($existingDomains)) {
             $this->warn("{$this->getListTypeLabel()} is empty. No domains to remove.");
@@ -187,7 +187,7 @@ class UpdateDomains extends Command
 
     private function listDomains(): void
     {
-        $domains = Storage::json($this->storagePath) ?? [];
+        $domains = (array) (Storage::json($this->storagePath) ?? []);
 
         if (empty($domains)) {
             $this->warn("No domains found in {$this->listType}.");

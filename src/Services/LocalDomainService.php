@@ -70,7 +70,7 @@ class LocalDomainService
         // Cache the domain lists as they don't change frequently
         return $this->cacheService->remember(
             "domains:{$filePath}",
-            fn() => Storage::json($filePath) ?? [],
+            fn() => (array) (Storage::json($filePath) ?? []),
         );
     }
 
