@@ -25,7 +25,7 @@ class UpdateDisposableDomains extends Command implements Isolatable
     {
         parent::__construct();
 
-        $this->config = Config::get('kolaybi.mail-checker.local.disposable');
+        $this->config = Config::get('kolaybi.mail-checker.local.disposable', []);
     }
 
     public function handle(): int

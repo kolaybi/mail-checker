@@ -20,7 +20,7 @@ class ExternalMailService
 
     public function __construct()
     {
-        $this->config = Config::get('kolaybi.mail-checker.external');
+        $this->config = Config::get('kolaybi.mail-checker.external', []);
         $this->cacheService = new CacheService(
             Arr::get($this->config, 'cache.ttl'),
             Arr::get($this->config, 'cache.enabled'),
