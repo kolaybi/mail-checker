@@ -13,7 +13,6 @@ use KolayBi\Validation\Mail\Exceptions\InaccessibleMailException;
 use KolayBi\Validation\Mail\Exceptions\InvalidMailException;
 use KolayBi\Validation\Mail\Services\ExternalMailService;
 use KolayBi\Validation\Mail\Services\LocalDomainService;
-use Psr\SimpleCache\InvalidArgumentException;
 
 final class MailChecker
 {
@@ -254,14 +253,12 @@ final class MailChecker
 
     /**
      * Clear all caches (useful for testing or cache management)
-     *
-     * @throws InvalidArgumentException
      */
     public static function clearAllCaches(): bool
     {
         $instance = self::getInstance();
-        $localResult = $instance->localDomainService?->clearCache() ?? true;
-        $externalResult = $instance->externalMailService?->clearCache() ?? true;
+        $localResult = $instance->getLocalDomainService()->clearCache();
+        $externalResult = $instance->getExternalMailService()->clearCache();
 
         return $localResult && $externalResult;
     }
