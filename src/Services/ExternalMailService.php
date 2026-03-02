@@ -97,9 +97,10 @@ class ExternalMailService
         $priorityOrder = Arr::get($this->config, 'priority', []);
         $allProviders = Arr::get($this->config, 'providers', []);
 
-        return collect(Arr::only($allProviders, $priorityOrder))
-            ->mapWithKeys(fn($provider) => [
-                Arr::get($provider, 'resolver') => Arr::get($provider, 'config', []),
+        return collect($priorityOrder)
+            ->intersect(array_keys($allProviders))
+            ->mapWithKeys(fn(string $key) => [
+                Arr::get($allProviders, "{$key}.resolver") => Arr::get($allProviders, "{$key}.config", []),
             ])
             ->filter(fn(array $config) => !empty($config['api_key'] ?? $config['access_key'] ?? null))
             ->toArray();
