@@ -69,7 +69,8 @@ class LocalDomainService
     }
 
     /**
-     * Check whether the given mail address' domain matches one from the given domains
+     * Check whether the given mail address' domain matches one from the given domains.
+     * Matches both exact domains and parent domains (e.g. mail.example.com matches example.com).
      */
     private function contains(string $mail, array $domains): bool
     {
@@ -77,18 +78,18 @@ class LocalDomainService
             return false;
         }
 
-        // Parse the mail to its top level domain.
-        preg_match(
-            '/([^.\/]+)(\.[^.\/]+)((\.[^.\/]+)+)?$/',
-            explode('@', $mail, 2)[1] ?? '',
-            $domain,
-        );
+        $mailDomain = explode('@', $mail, 2)[1] ?? '';
 
-        // Just ignore this validator if the value doesn't even resemble a mail or domain.
-        if (0 === count($domain)) {
+        if (empty($mailDomain)) {
             return false;
         }
 
-        return in_array($domain[0], $domains);
+        foreach ($domains as $domain) {
+            if ($mailDomain === $domain || str_ends_with($mailDomain, '.' . $domain)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
