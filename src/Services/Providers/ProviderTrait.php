@@ -18,7 +18,7 @@ trait ProviderTrait
             return $this->performValidation($mail);
         }
 
-        $className = class_basename(get_class($this));
+        $className = class_basename($this::class);
         $serviceType = ServiceType::EXTERNAL->value;
 
         return $this->cacheService->remember(
