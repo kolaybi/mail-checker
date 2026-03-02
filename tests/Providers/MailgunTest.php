@@ -17,9 +17,9 @@ beforeEach(function () {
 it('returns true for valid non-disposable email', function () {
     Http::fake([
         'api.mailgun.net/*' => Http::response([
-            'is_valid'               => true,
-            'is_disposable_address'  => false,
-            'mailbox_verification'   => 'true',
+            'is_valid'              => true,
+            'is_disposable_address' => false,
+            'mailbox_verification'  => 'true',
         ]),
     ]);
 
@@ -29,9 +29,9 @@ it('returns true for valid non-disposable email', function () {
 it('returns false for invalid email', function () {
     Http::fake([
         'api.mailgun.net/*' => Http::response([
-            'is_valid'               => false,
-            'is_disposable_address'  => false,
-            'mailbox_verification'   => 'true',
+            'is_valid'              => false,
+            'is_disposable_address' => false,
+            'mailbox_verification'  => 'true',
         ]),
     ]);
 
@@ -41,9 +41,9 @@ it('returns false for invalid email', function () {
 it('returns false for disposable email', function () {
     Http::fake([
         'api.mailgun.net/*' => Http::response([
-            'is_valid'               => true,
-            'is_disposable_address'  => true,
-            'mailbox_verification'   => 'true',
+            'is_valid'              => true,
+            'is_disposable_address' => true,
+            'mailbox_verification'  => 'true',
         ]),
     ]);
 
@@ -53,9 +53,9 @@ it('returns false for disposable email', function () {
 it('returns false when mailbox verification fails', function () {
     Http::fake([
         'api.mailgun.net/*' => Http::response([
-            'is_valid'               => true,
-            'is_disposable_address'  => false,
-            'mailbox_verification'   => 'false',
+            'is_valid'              => true,
+            'is_disposable_address' => false,
+            'mailbox_verification'  => 'false',
         ]),
     ]);
 
@@ -81,9 +81,9 @@ it('throws on HTTP failure', function () {
 it('uses HTTP Basic Auth', function () {
     Http::fake([
         'api.mailgun.net/*' => Http::response([
-            'is_valid'               => true,
-            'is_disposable_address'  => false,
-            'mailbox_verification'   => 'true',
+            'is_valid'              => true,
+            'is_disposable_address' => false,
+            'mailbox_verification'  => 'true',
         ]),
     ]);
 

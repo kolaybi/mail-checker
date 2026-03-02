@@ -77,9 +77,9 @@ describe('provider priority', function () {
 
         Http::fake([
             'api.mailgun.net/*' => Http::response([
-                'is_valid'               => true,
-                'is_disposable_address'  => false,
-                'mailbox_verification'   => 'true',
+                'is_valid'              => true,
+                'is_disposable_address' => false,
+                'mailbox_verification'  => 'true',
             ]),
         ]);
 

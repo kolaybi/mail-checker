@@ -17,9 +17,9 @@ beforeEach(function () {
 it('returns true for valid, non-disposable email with MX', function () {
     Http::fake([
         'apilayer.net/*' => Http::response([
-            'format_valid'  => true,
-            'disposable'    => false,
-            'mx_found'      => true,
+            'format_valid' => true,
+            'disposable'   => false,
+            'mx_found'     => true,
         ]),
     ]);
 
@@ -29,9 +29,9 @@ it('returns true for valid, non-disposable email with MX', function () {
 it('returns false for disposable email', function () {
     Http::fake([
         'apilayer.net/*' => Http::response([
-            'format_valid'  => true,
-            'disposable'    => true,
-            'mx_found'      => true,
+            'format_valid' => true,
+            'disposable'   => true,
+            'mx_found'     => true,
         ]),
     ]);
 
@@ -41,9 +41,9 @@ it('returns false for disposable email', function () {
 it('returns false when no MX record found', function () {
     Http::fake([
         'apilayer.net/*' => Http::response([
-            'format_valid'  => true,
-            'disposable'    => false,
-            'mx_found'      => false,
+            'format_valid' => true,
+            'disposable'   => false,
+            'mx_found'     => false,
         ]),
     ]);
 
@@ -53,9 +53,9 @@ it('returns false when no MX record found', function () {
 it('returns false for invalid format', function () {
     Http::fake([
         'apilayer.net/*' => Http::response([
-            'format_valid'  => false,
-            'disposable'    => false,
-            'mx_found'      => false,
+            'format_valid' => false,
+            'disposable'   => false,
+            'mx_found'     => false,
         ]),
     ]);
 
