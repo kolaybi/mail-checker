@@ -3,7 +3,6 @@
 namespace KolayBi\Validation\Mail\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use KolayBi\Validation\Mail\Enums\ServiceType;
 use Throwable;
 
-class UpdateDisposableDomains extends Command implements Isolatable
+class UpdateDisposableDomains extends Command
 {
     protected $signature = 'mail-checker:update-disposable-domains';
 
