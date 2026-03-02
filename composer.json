@@ -2,7 +2,7 @@
   "name": "kolaybi/mail-checker",
   "description": "A Laravel package providing e-mail validation for better email delivery.",
   "keywords": ["mail", "validation", "laravel", "kolaybi"],
-  "license": "proprietary",
+  "license": "MIT",
   "type": "library",
   "support": {
     "issues": "https://github.com/kolaybi/mail-checker/issues",
