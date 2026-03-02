@@ -36,7 +36,7 @@ class UpdateDomains extends Command
         }
 
         // Get storage path from config based on type
-        $this->storagePath = Config::get("mail-checker.local.{$this->listType}.storage_path");
+        $this->storagePath = Config::get("kolaybi.mail-checker.local.{$this->listType}.storage_path");
 
         // Validate storage path configuration
         if (empty($this->storagePath)) {

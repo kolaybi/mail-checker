@@ -16,7 +16,7 @@ class LocalDomainService
 
     public function __construct()
     {
-        $this->config = Config::get('mail-checker.local');
+        $this->config = Config::get('kolaybi.mail-checker.local');
         $this->cacheService = new CacheService(
             Arr::get($this->config, 'cache.ttl'),
             Arr::get($this->config, 'cache.enabled'),

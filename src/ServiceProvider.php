@@ -17,7 +17,7 @@ class ServiceProvider extends IlluminateServiceProvider
 
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/mail-checker.php', 'mail-checker');
+        $this->mergeConfigFrom(__DIR__ . '/../config/mail-checker.php', 'kolaybi.mail-checker');
     }
 
     public function provides(): array
