@@ -11,7 +11,7 @@ readonly class Emailable implements ExternalMailProviderInterface
 {
     use ProviderTrait;
 
-    private const string UNDELIVERABLE = 'UNDELIVERABLE';
+    private const string UNDELIVERABLE = 'undeliverable';
 
     /**
      * @throws EmailableExternalMailProviderException
