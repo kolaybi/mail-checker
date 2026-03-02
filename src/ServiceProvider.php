@@ -20,15 +20,6 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/mail-checker.php', 'kolaybi.mail-checker');
     }
 
-    public function provides(): array
-    {
-        return [
-            ClearMailCache::class,
-            UpdateDisposableDomains::class,
-            UpdateDomains::class,
-        ];
-    }
-
     private function bootConfig(): void
     {
         $this->publishes([
