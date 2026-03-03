@@ -2,7 +2,12 @@
 
 All notable changes to `kolaybi/mail-checker` will be documented in this file.
 
-## [v2.0.0](https://github.com/kolaybi/mail-checker/commits/v2.0.0) (2026-03-03)
+## [v2.1.0](https://github.com/kolaybi/mail-checker/compare/v2.0.0...v2.1.0) (2026-03-03)
+
+### Added
+- `ValidMailRule` for Laravel validation with support for length constraints and MailChecker logic
+
+## [v2.0.0](https://github.com/kolaybi/mail-checker/compare/v2.0.0...v2.1.0) (2026-03-03)
 
 ### Breaking
 - Config key changed from `mail-checker` to `kolaybi.mail-checker`
@@ -44,12 +49,12 @@ All notable changes to `kolaybi/mail-checker` will be documented in this file.
 - Updated `get_class($this)` to `$this::class` in ProviderTrait
 - Removed dead code in `UpdateDomains` (redundant regex check, impossible `json_encode` guard)
 
-## [v1.5.2](https://github.com/kolaybi/mail-checker/commits/v1.5.2) (2025-08-05)
+## [v1.5.2](https://github.com/kolaybi/mail-checker/compare/v1.5.1...v1.5.2) (2025-08-05)
 
 ### Changed
 - Refactored email validation to use instance methods and improve service initialization
 
-## [v1.5.1](https://github.com/kolaybi/mail-checker/commits/v1.5.1) (2025-08-05)
+## [v1.5.1](https://github.com/kolaybi/mail-checker/compare/v1.5.1...v1.5.2) (2025-08-05)
 
 ### Fixed
 - Fixed cache invalidation after domain updates in UpdateDomains and UpdateDisposableDomains commands
@@ -58,12 +63,12 @@ All notable changes to `kolaybi/mail-checker` will be documented in this file.
 ### Added
 - Added explicit PHP 8.4 requirement in composer.json
 
-## [v1.5.0](https://github.com/kolaybi/mail-checker/commits/v1.5.0) (2025-07-28)
+## [v1.5.0](https://github.com/kolaybi/mail-checker/compare/v1.4.0...v1.5.0) (2025-07-28)
 
 ### Added
 - Added `fail_if_no_providers` configuration option for external mail validation
 
-## [v1.4.0](https://github.com/kolaybi/mail-checker/commits/v1.4.0) (2025-07-28)
+## [v1.4.0](https://github.com/kolaybi/mail-checker/compare/v1.3.0...v1.4.0) (2025-07-28)
 
 ### Added
 - Added domain validation methods for whitelist, blacklist, disposable, and format checks
@@ -73,7 +78,7 @@ All notable changes to `kolaybi/mail-checker` will be documented in this file.
 - Documented advanced email validation methods in README.md
 - Refactored email validation methods for better maintainability
 
-## [v1.3.0](https://github.com/kolaybi/mail-checker/commits/v1.3.0) (2025-07-28)
+## [v1.3.0](https://github.com/kolaybi/mail-checker/compare/v1.2.0...v1.3.0) (2025-07-28)
 
 ### Added
 - Added multiple new external mail validation providers:
@@ -88,7 +93,7 @@ All notable changes to `kolaybi/mail-checker` will be documented in this file.
 - Enhanced error handling and logging for external mail deliverability checks
 - Added null check before using the cache service to prevent potential issues
 
-## [v1.2.0](https://github.com/kolaybi/mail-checker/commits/v1.2.0) (2025-07-23)
+## [v1.2.0](https://github.com/kolaybi/mail-checker/compare/v1.1.0...v1.2.0) (2025-07-23)
 
 ### Added
 - Enhanced MailChecker with detailed validation, batch processing, and cache management methods
@@ -101,7 +106,7 @@ All notable changes to `kolaybi/mail-checker` will be documented in this file.
 - Enhanced provider retry mechanism for more reliable service
 - Improved error handling across all validation services
 
-## [v1.1.0](https://github.com/kolaybi/mail-checker/commits/v1.1.0) (2025-07-22)
+## [v1.1.0](https://github.com/kolaybi/mail-checker/compare/v1.0.0...v1.1.0) (2025-07-22)
 
 ### Added
 - Implemented caching mechanism for both local and external validation services
