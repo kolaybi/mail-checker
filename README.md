@@ -135,6 +135,7 @@ if (MailChecker::isValid('user@example.com')) {
 // Perform only local validation checks
 MailChecker::check('user@example.com', skipExternalControl: true);
 ```
+
 ```php
 // Perform only local validation checks
 if (MailChecker::isValid('user@example.com', skipExternalControl: true)) {

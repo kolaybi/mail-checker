@@ -1,50 +1,55 @@
 {
-  "name": "kolaybi/mail-checker",
-  "description": "A Laravel package providing e-mail validation for better email delivery.",
-  "keywords": ["mail", "validation", "laravel", "kolaybi"],
-  "license": "MIT",
-  "type": "library",
-  "support": {
-    "issues": "https://github.com/kolaybi/mail-checker/issues",
-    "source": "https://github.com/kolaybi/mail-checker"
-  },
-  "require": {
-    "php": "^8.4",
-    "illuminate/support": "^12",
-    "illuminate/console": "^12"
-  },
-  "require-dev": {
-    "laravel/pint": "^1.27",
-    "orchestra/testbench": "^10.9",
-    "pestphp/pest": "^4.4",
-    "pestphp/pest-plugin-laravel": "^4.1"
-  },
-  "autoload": {
-    "psr-4": {
-      "KolayBi\\Validation\\Mail\\": "src/"
+    "name": "kolaybi/mail-checker",
+    "description": "A Laravel package providing e-mail validation for better email delivery.",
+    "keywords": [
+        "mail",
+        "validation",
+        "laravel",
+        "kolaybi"
+    ],
+    "license": "MIT",
+    "type": "library",
+    "support": {
+        "issues": "https://github.com/kolaybi/mail-checker/issues",
+        "source": "https://github.com/kolaybi/mail-checker"
+    },
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^12",
+        "illuminate/console": "^12"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.27",
+        "orchestra/testbench": "^10.9",
+        "pestphp/pest": "^4.4",
+        "pestphp/pest-plugin-laravel": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "KolayBi\\Validation\\Mail\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "KolayBi\\Validation\\Mail\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "pint": "./vendor/bin/pint --parallel"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "KolayBi\\Validation\\Mail\\ServiceProvider"
+            ]
+        }
     }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "KolayBi\\Validation\\Mail\\Tests\\": "tests/"
-    }
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": true,
-  "config": {
-    "sort-packages": true,
-    "allow-plugins": {
-      "pestphp/pest-plugin": true
-    }
-  },
-  "scripts": {
-    "pint": "./vendor/bin/pint --dirty --parallel"
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "KolayBi\\Validation\\Mail\\ServiceProvider"
-      ]
-    }
-  }
 }
