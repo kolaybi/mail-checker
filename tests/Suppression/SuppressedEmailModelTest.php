@@ -1,14 +1,8 @@
 <?php
 
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use KolayBi\Validation\Mail\Enums\SuppressionReason;
 use KolayBi\Validation\Mail\Models\SuppressedEmail;
-
-uses(RefreshDatabase::class)->beforeEach(function () {
-    $this->app['config']->set('kolaybi.mail-checker.suppression.enabled', true);
-    $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
-});
 
 it('persists a suppression with ulid key and casts', function () {
     $row = SuppressedEmail::query()->create([
