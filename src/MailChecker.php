@@ -2,8 +2,10 @@
 
 namespace KolayBi\Validation\Mail;
 
+use Carbon\CarbonInterface;
 use Exception;
 use Illuminate\Support\Str;
+use KolayBi\Validation\Mail\Enums\SuppressionReason;
 use KolayBi\Validation\Mail\Exceptions\AbstractMailException;
 use KolayBi\Validation\Mail\Exceptions\BlacklistedMailException;
 use KolayBi\Validation\Mail\Exceptions\DisposableMailException;
@@ -11,13 +13,17 @@ use KolayBi\Validation\Mail\Exceptions\EmptyMailException;
 use KolayBi\Validation\Mail\Exceptions\ExternalMailProviderException;
 use KolayBi\Validation\Mail\Exceptions\InaccessibleMailException;
 use KolayBi\Validation\Mail\Exceptions\InvalidMailException;
+use KolayBi\Validation\Mail\Exceptions\SuppressedMailException;
+use KolayBi\Validation\Mail\Models\SuppressedEmail;
 use KolayBi\Validation\Mail\Services\ExternalMailService;
 use KolayBi\Validation\Mail\Services\LocalDomainService;
+use KolayBi\Validation\Mail\Services\SuppressionService;
 
 final class MailChecker
 {
     private ?LocalDomainService $localDomainService = null;
     private ?ExternalMailService $externalMailService = null;
+    private ?SuppressionService $suppressionService = null;
 
     /**
      * Perform the actual validation check
@@ -50,6 +56,10 @@ final class MailChecker
             throw new DisposableMailException();
         }
 
+        if ($this->getSuppressionService()->isSuppressed($mail)) {
+            throw new SuppressedMailException();
+        }
+
         if ($skipExternalControl) {
             return;
         }
@@ -67,6 +77,11 @@ final class MailChecker
         return $this->externalMailService ??= new ExternalMailService();
     }
 
+    private function getSuppressionService(): SuppressionService
+    {
+        return $this->suppressionService ??= new SuppressionService();
+    }
+
     /**
      * Perform comprehensive email validation checks
      *
@@ -76,7 +91,8 @@ final class MailChecker
      * 3. Format validation
      * 4. Blacklist check
      * 5. Disposable email check
-     * 6. External deliverability check (if enabled)
+     * 6. Suppression list check (if enabled)
+     * 7. External deliverability check (if enabled)
      *
      * @param string $mail                The email address to validate
      * @param bool   $skipExternalControl Skip external API validation for faster local-only checks
@@ -88,6 +104,7 @@ final class MailChecker
      * @throws ExternalMailProviderException When all external providers fail
      * @throws InaccessibleMailException When external validation fails
      * @throws InvalidMailException When email format is invalid
+     * @throws SuppressedMailException When email is on the suppression list
      */
     public static function check(string $mail, bool $skipExternalControl = false): void
     {
@@ -249,6 +266,69 @@ final class MailChecker
     public static function isNotDisposable(string $mail): bool
     {
         return !self::isDisposable($mail);
+    }
+
+    /**
+     * Check if an email address is on the suppression list
+     *
+     * Suppressed emails are addresses that previously bounced, complained,
+     * or were manually flagged, and should not be sent to again.
+     *
+     * @param string $mail The email address to check
+     *
+     * @return bool True if the email address is suppressed, false otherwise
+     */
+    public static function isSuppressed(string $mail): bool
+    {
+        return self::getInstance()->getSuppressionService()->isSuppressed($mail);
+    }
+
+    /**
+     * Check if an email address is NOT on the suppression list
+     *
+     * This is the inverse of isSuppressed() - returns true if the email address
+     * is NOT suppressed.
+     *
+     * @param string $mail The email address to check
+     *
+     * @return bool True if the email address is NOT suppressed, false otherwise
+     */
+    public static function isNotSuppressed(string $mail): bool
+    {
+        return !self::isSuppressed($mail);
+    }
+
+    /**
+     * Add an email address to the suppression list
+     *
+     * @param string            $mail         The email address to suppress
+     * @param SuppressionReason $reason       Why the address is being suppressed
+     * @param ?string           $source       Where the suppression originated (e.g. a webhook)
+     * @param ?CarbonInterface  $suppressedAt When the suppression occurred; defaults to now
+     * @param array             $metadata     Arbitrary additional context
+     *
+     * @return SuppressedEmail The created or updated suppression record
+     */
+    public static function suppress(
+        string $mail,
+        SuppressionReason $reason,
+        ?string $source = null,
+        ?CarbonInterface $suppressedAt = null,
+        array $metadata = [],
+    ): SuppressedEmail {
+        return self::getInstance()->getSuppressionService()->suppress($mail, $reason, $source, $suppressedAt, $metadata);
+    }
+
+    /**
+     * Remove an email address from the suppression list
+     *
+     * @param string $mail The email address to unsuppress
+     *
+     * @return bool True if a suppression record was removed, false otherwise
+     */
+    public static function unsuppress(string $mail): bool
+    {
+        return self::getInstance()->getSuppressionService()->unsuppress($mail);
     }
 
     /**
