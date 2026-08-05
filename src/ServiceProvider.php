@@ -4,6 +4,9 @@ namespace KolayBi\Validation\Mail;
 
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use KolayBi\Validation\Mail\Console\ClearMailCache;
+use KolayBi\Validation\Mail\Console\ImportSuppressions;
+use KolayBi\Validation\Mail\Console\SuppressMail;
+use KolayBi\Validation\Mail\Console\UnsuppressMail;
 use KolayBi\Validation\Mail\Console\UpdateDisposableDomains;
 use KolayBi\Validation\Mail\Console\UpdateDomains;
 
@@ -13,6 +16,7 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->bootConfig();
         $this->bootCommands();
+        $this->bootMigrations();
     }
 
     public function register(): void
@@ -39,6 +43,9 @@ class ServiceProvider extends IlluminateServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 ClearMailCache::class,
+                ImportSuppressions::class,
+                SuppressMail::class,
+                UnsuppressMail::class,
                 UpdateDisposableDomains::class,
                 UpdateDomains::class,
             ]);
@@ -48,5 +55,12 @@ class ServiceProvider extends IlluminateServiceProvider
                 key: 'mail-checker',
             );
         }
+    }
+
+    private function bootMigrations(): void
+    {
+        $this->publishesMigrations([
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+        ], 'mail-checker-migrations');
     }
 }
