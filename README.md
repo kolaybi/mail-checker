@@ -286,6 +286,10 @@ MailChecker::suppress(
 MailChecker::unsuppress(string $mail): bool;
 ```
 
+`suppress()` and `unsuppress()` throw a `RuntimeException` while the feature is
+disabled; read-only checks (`isSuppressed()` / `isNotSuppressed()`) simply return
+`false`/`true` without touching the database.
+
 When enabled, `MailChecker::check()` (and therefore `isValid()`) throws
 `SuppressedMailException` for a suppressed address, checked after the
 blacklist/disposable checks and before external deliverability validation.
