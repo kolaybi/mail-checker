@@ -100,6 +100,11 @@ MAILGUN_TIMEOUT=10
 NEVER_BOUNCE_VALIDATION_ENDPOINT=https://api.neverbounce.com/v4/single/check
 NEVER_BOUNCE_API_KEY=your_api_key
 NEVER_BOUNCE_TIMEOUT=10
+
+# Suppression list configuration (opt-in, see "Suppression list" below)
+MAIL_CHECKER_SUPPRESSION_ENABLED=false
+MAIL_CHECKER_SUPPRESSION_DB_CONNECTION=
+MAIL_CHECKER_SUPPRESSION_DB_SCHEMA=
 ```
 
 ## Usage
@@ -222,6 +227,130 @@ php artisan mail-checker:cache-clear --type=local               # Clear only loc
 php artisan mail-checker:cache-clear --type=external            # Clear only external validation cache
 php artisan mail-checker:cache-clear --type=local --domain-type=whitelist  # Clear only whitelist domain cache
 ```
+
+## Suppression list
+
+An opt-in suppression list for addresses that bounced, complained, or were manually
+flagged, so they are never sent to again. It is **disabled by default**
+(`enabled` = `false`) — until you opt in, the package behaves exactly as before with
+zero change in validation behavior.
+
+### Configuration
+
+```php
+'suppression' => [
+    'enabled'    => (bool) env('MAIL_CHECKER_SUPPRESSION_ENABLED', false),
+    'connection' => env('MAIL_CHECKER_SUPPRESSION_DB_CONNECTION'),
+    'schema'     => env('MAIL_CHECKER_SUPPRESSION_DB_SCHEMA'),
+    'table'      => 'mail_suppressions',
+    'model'      => SuppressedEmail::class,
+],
+```
+
+- `enabled` (`MAIL_CHECKER_SUPPRESSION_ENABLED`) — must be explicitly set to `true` to
+  turn the feature on. Defaults to `false`.
+- `connection` (`MAIL_CHECKER_SUPPRESSION_DB_CONNECTION`) — database connection for
+  the suppression table. Defaults to `null` (the application's default connection).
+- `schema` (`MAIL_CHECKER_SUPPRESSION_DB_SCHEMA`) — optional schema/database prefix
+  applied to the table name (`schema.table`). Defaults to `null` (no prefix).
+- `table` — suppression table name. Not env-backed; override the published config
+  directly. Defaults to `mail_suppressions`.
+- `model` — the Eloquent model class used for suppression queries. Not env-backed;
+  override the published config directly to substitute your own model. Defaults to
+  `KolayBi\Validation\Mail\Models\SuppressedEmail`.
+
+Publish and run the migration to create the table:
+
+```bash
+php artisan vendor:publish --provider="KolayBi\Validation\Mail\ServiceProvider" --tag=mail-checker-migrations
+php artisan migrate
+```
+
+### Static API
+
+```php
+use KolayBi\Validation\Mail\MailChecker;
+use KolayBi\Validation\Mail\Enums\SuppressionReason;
+
+MailChecker::isSuppressed(string $mail): bool;
+MailChecker::isNotSuppressed(string $mail): bool;
+
+MailChecker::suppress(
+    string $mail,
+    SuppressionReason $reason,
+    ?string $source = null,
+    ?CarbonInterface $suppressedAt = null,
+    array $metadata = [],
+): SuppressedEmail;
+
+MailChecker::unsuppress(string $mail): bool;
+```
+
+`suppress()` and `unsuppress()` throw a `RuntimeException` while the feature is
+disabled; read-only checks (`isSuppressed()` / `isNotSuppressed()`) simply return
+`false`/`true` without touching the database.
+
+When enabled, `MailChecker::check()` (and therefore `isValid()`) throws
+`SuppressedMailException` for a suppressed address, checked after the
+blacklist/disposable checks and before external deliverability validation.
+
+### Console commands
+
+```bash
+# Suppress an address
+php artisan mail-checker:suppress user@example.com --reason=bounce --source=webhook
+
+# Remove an address from the suppression list
+php artisan mail-checker:unsuppress user@example.com
+
+# Bulk import from a CSV file
+php artisan mail-checker:suppression-import path/to/suppressions.csv --source=import
+```
+
+`--reason` accepts `bounce`, `complaint` or `manual` (case-insensitive) and defaults
+to `manual`.
+
+`mail-checker:suppression-import` reads a CSV with header `email,reason,suppressed_at`:
+
+```csv
+email,reason,suppressed_at
+bounced@example.com,bounce,2026-01-01 00:00:00
+complained@example.com,COMPLAINT,
+```
+
+- `reason` is `bounce`, `complaint` or `manual`, case-insensitive.
+- `suppressed_at` may be left empty — it defaults to the time of import.
+- Rows with a blank email or an unrecognized reason are skipped and reported
+  separately from the imported count.
+
+### Sync interface (upstream/ESP suppression state)
+
+To keep an external ESP's suppression state in sync with `unsuppress()`, bind an
+implementation of `SuppressionSyncInterface` in your application container:
+
+```php
+namespace KolayBi\Validation\Mail\Contracts;
+
+interface SuppressionSyncInterface
+{
+    /**
+     * Remove the address from the upstream (ESP-side) suppression state.
+     * Implementations MUST throw on failure so unsuppress fails closed.
+     */
+    public function forget(string $email): void;
+}
+```
+
+- `unsuppress()` calls `forget()` **before** deleting the local record.
+- Implementations **must throw** on failure. `unsuppress()` does not catch that
+  exception, so a failed upstream sync aborts the operation and leaves the local
+  suppression record in place — it fails closed instead of silently unsuppressing
+  locally while the ESP still blocks the address.
+- If no implementation is bound, `unsuppress()` only affects the local suppression
+  list.
+- The package does not bind a default implementation — consuming applications are
+  responsible for binding `SuppressionSyncInterface` in their own container (for
+  example in a service provider's `register()`).
 
 ## Changelog
 

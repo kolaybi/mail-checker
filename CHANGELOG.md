@@ -2,6 +2,15 @@
 
 All notable changes to `kolaybi/mail-checker` will be documented in this file.
 
+## [v2.2.0](https://github.com/kolaybi/mail-checker/compare/v2.1.1...v2.2.0) (2026-08-05)
+
+### Added
+- Opt-in suppression list: `SuppressedEmail` model, `SuppressionService`, and a pipeline check that throws `SuppressedMailException` for suppressed addresses
+- `SuppressionSyncInterface` — fail-closed upstream (ESP-side) sync hook called before a local unsuppress
+- `mail-checker:suppress`, `mail-checker:unsuppress` and `mail-checker:suppression-import` console commands
+- Publishable migration for the `mail_suppressions` table (tag `mail-checker-migrations`)
+- New `illuminate/database` dependency
+
 ## [v2.1.0](https://github.com/kolaybi/mail-checker/compare/v2.0.0...v2.1.0) (2026-03-03)
 
 ### Added

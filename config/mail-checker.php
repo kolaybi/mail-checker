@@ -1,5 +1,6 @@
 <?php
 
+use KolayBi\Validation\Mail\Models\SuppressedEmail;
 use KolayBi\Validation\Mail\Services\Providers\AbstractApi;
 use KolayBi\Validation\Mail\Services\Providers\Bouncer;
 use KolayBi\Validation\Mail\Services\Providers\Emailable;
@@ -109,5 +110,12 @@ return [
                 ],
             ],
         ],
+    ],
+    'suppression' => [
+        'enabled'    => (bool) env('MAIL_CHECKER_SUPPRESSION_ENABLED', false),
+        'connection' => env('MAIL_CHECKER_SUPPRESSION_DB_CONNECTION'),
+        'schema'     => env('MAIL_CHECKER_SUPPRESSION_DB_SCHEMA'),
+        'table'      => 'mail_suppressions',
+        'model'      => SuppressedEmail::class,
     ],
 ];
